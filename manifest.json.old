@@ -1,0 +1,24 @@
+{
+  "name": "Mappy",
+  "version": "0.6.1",
+  "description": "Finds addresses in the web page you're on and pops up a map window.",
+  "icons": { "128": "icon.png" },
+  "background": { "scripts": ["background.js", "jquery-1.8.2.js"] },
+  "permissions": [
+    "http://*/*",
+    "https://*/*",
+    "file:///home/*",
+    "contextMenus",
+    "tabs"
+  ],
+  "content_scripts": [ 
+  {
+	"matches": ["http://*/*","https://*/*"],
+	"js": ["show_contexts_jquery.js"]
+  }],
+  "browser_action": {
+      "default_name": "Display Map",
+      "default_icon": "icon.png"
+  },
+  "manifest_version": 2
+}

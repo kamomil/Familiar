@@ -1,0 +1,59 @@
+31/8
+mappy.js is the content script it returns the conext of the selected word.
+
+14/10
+Today and yesterday I was trying to add jquery and dioctionary to my app.
+at first I used ajax in jquery in order to call morfix and got a GET error when trying to download some picture. 
+I decided it's too MESURBAL and I end up using webster dictionary api. 
+At first I tried to use the php script they provided and couldn't make it work.
+I then use direct URL.
+
+I tryed the code:
+
+//------------------------------
+
+def = jdata.find('dt');
+def[0].text();          //this doesn't work because def[0] is of type "element" and not jQuery
+//------------------------------
+I keeped getting the bug:
+
+Uncaught TypeError: Object #<Element> has no method 'text'
+
+The I realyse the code should be:
+
+//------------------------------
+
+def = jdata.find('dt');
+$(def[0]).text();      //$() make a jQuery object from the Element object
+//------------------------------
+ 
+if(def instanceof jQuery){//yofi it is
+   alert("yofi!");
+}
+alert(def[0].constructor.name);//element type
+
+27/10
+If the word has only one entry and is "past tense of X"
+	I create a word object for X
+If the word has two enteries where one is "past tense of X" 
+	I create two objects , one of the word and the other of X and I put the context in both of them.
+
+30/3/2013
+After long time I stopped working on it. 
+I dwonloaded the Aquarium version sent on 29/10/2012
+It seems to work fine, when clicking on the icon, It just show the clear button , no other text.
+
+6/1/2016
+had a bug : added this to the manifst:
+
+ "content_scripts": [ 
+  {
+	"matches": ["http://*/*","https://*/*"],
+	"js": ["show_contexts_jquery.js"]
+  }],
+
+
+This cause show_context to fire every page.
+
+Also, read that javascript is not multithredead so cool. 
+
