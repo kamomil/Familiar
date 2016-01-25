@@ -83,7 +83,7 @@ chrome.extension.onRequest.addListener(function(message, sender, sendResponse) {
 		  /*******************/
 		  /********/
 		  console.log("about to create");
-		  chrome.windows.create({url: "show_contexts_jquery.html", type: "popup", width: 200, height: 200}, function(tab){
+		  chrome.windows.create({url: "show_contexts_jquery.html", type: "popup", width: 500, height: 600, left: 200, top: 20}, function(tab){
 		      /* this will be executed right after the create , before the html's js will run, so here we should add listener to the created html*/
 		      console.log("bla");
 		      chrome.runtime.onMessage.addListener(function listen(request, sender, sendResponse) {
