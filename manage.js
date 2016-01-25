@@ -82,6 +82,18 @@ function clickChecked(e){
 	location.reload();
 }
 
+
+function safe_json_parse(word){
+    try{
+	var contexts = JSON.parse(localStorage.getItem(word));
+	return contexts;
+    }
+    catch(err){
+	console.error("JSON could not parse "+ localStorage.getItem(word));
+	return null;
+    }
+}
+
 $(document).ready(function(){
     console.log("in manage ready");
     // Add event listeners once the DOM has fully loaded by listening for the
@@ -98,18 +110,14 @@ $(document).ready(function(){
 	if (word !== null){
 	    console.log("word"+i+": "+word);
 	    $("body").append("<br><br><input type=\"checkbox\" name=\"word\" value=\""+word+"\" id=\""+i+"_"+word+"\"> WORD: "+word+"<br>");
-	    console.log("after");
-	    var contexts = JSON.parse(localStorage.getItem(word));
-	    console.log("after2 " + contexts);
-	    if(context !== null){
+	    console.log("after JSON parse ");
+	    var contexts = safe_json_parse(word);
+	    if(contexts !== null){
+		console.log("not nu " + contexts);
 		for(var j=0 ; j<contexts.length ; j++){	 
 		    $("body").append("<input type=\"checkbox\" name=\"context\" value=\""+word+"\"  id=\""+i+"."+j+"\">"+contexts[j].ctx+"<br>");
 		}
-	    }
-	    else{
-		consol.log("asas");
-	    }
-
+	    }  
 	}
     }
     $('input[name="word"]').bind('click', function ()
