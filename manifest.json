@@ -1,7 +1,7 @@
 {
-  "name": "Mappy",
-  "version": "0.6.1",
-  "description": "Finds addresses in the web page you're on and pops up a map window.",
+  "name": "Familiar",
+  "version": "0.1",
+  "description": "Helps with improving vocabulary by saving all words you ever ancountered",
   "icons": { "128": "icon.png" },
   "background": { "scripts": ["background.js", "jquery-1.8.2.js"] },
   "permissions": [
@@ -12,7 +12,7 @@
     "tabs"
   ],
   "browser_action": {
-      "default_name": "Display Map",
+      "default_name": "F",
       "default_icon": "icon.png"
   },
   "manifest_version": 2

@@ -1,69 +1,63 @@
 
 
-//var sel;
+
+
+
 if(sel){
 	console.log("getSel.js: sel before :"+sel.toString());
 }
 var sel = window.getSelection();
 console.log("getSel.js: sel after :"+sel.toString());
 var range = sel.getRangeAt(0);
-
-//var widerRange = range.cloneRange();
-//var widerStrtOffset = Math.max(0,widerRange.startOffset-10); 
-//var widerEndOffset =  Math.min(widerRange.endContainer.textContent.length,widerRange.endOffset+10)); 
-//widerRange.setStart(widerRange.startContainer,widerStrtOffset);
-//widerRange.setEnd(widerRange.endContainer,widerEndOffset);
-
-
- 
-//alert("WIDER RANGE: "+widerRange.toString());
-//alert("RANGE: "+range.startOffset+"? "+range.endOffset);
-//alert("RANGE: "+widerRange.startOffset+"? "+widerRange.endOffset);
-//alert("RANGE: "+range.endOffset+"? "+(range.endContainer.isEqualNode(range.startContainer)));
-//range.selectNode(range.startContainer);
 var selStr = sel.toString();
 //var widerStr = widerRange.toString();
 
-var wordRegex = /[a-zA-Z]+(\W*[a-zA-Z]+)?/;
 
+var wordRegex = /[a-zA-Z]+(\W*[a-zA-Z]+)?/;
 
 	
 var word = wordRegex.exec(selStr);
 
-//var missSelRegex = new RegExp("\w+"+word)
-
+/*
+  In case there was a selected word, confirm it with the user.
+  If the user confirms, call chrome.extension.sendRequest({word:word,context:ctx}); with the word and the context
+*/
 if(word !== null){
     var continue_to_upper_parent = range.endContainer.isEqualNode(range.startContainer);
     word=word[0];
     if(confirm("The word is \""+word+"\". Is it what you meant? ")== true){
-		var container = range.commonAncestorContainer;		
-		range.selectNode(container);
-			
-		if(continue_to_upper_parent){
-			container = range.commonAncestorContainer; 
-			range.selectNodeContents(container);
-		}
-		//alert(range.toString());
-		console.log("getSel.js: range.toString=\n"+range.toString());
-		var ctx = range.toString();
-		ctx = naiveSentenceRec(ctx,word);
-		if(ctx===""){
-			alert("You miss selected the word");
-		}
-		else{
-			chrome.extension.sendRequest({word:word,context:ctx});
-		}
+	var container = range.commonAncestorContainer;		
+	range.selectNode(container);
+	
+	if(continue_to_upper_parent){
+	    container = range.commonAncestorContainer; 
+	    range.selectNodeContents(container);
 	}
+	//alert(range.toString());
+	console.log("getSel.js: range.toString=\n"+range.toString());
+	var ctx = range.toString();
+	ctx = naiveSentenceRec(ctx,word);
+	if(ctx===""){
+	    alert("You miss selected the word");
+	}
+	else{
+	    chrome.extension.sendRequest({word:word,context:ctx});
+	}
+    }
+    
 }
 else{
 	alert("the selected string is not a word");
 }
 
-//given a paragraph and a word , return the senetence in the paragraph where the word appear.
-
+/*
+given a paragraph and a word , return the senetence in the paragraph where the word appear.
+This code is a bit messy
+*/
 function naiveSentenceRec(paragraph ,word){
     //current implementation:
-    //split the paragraph according to commas. in the list, if a variable is not a new line, concate it to the one before.
+    //split the paragraph according to commas. 
+    //in the list, if a variable is not a new line, concate it to the one before.
     
     var commaSplitList = paragraph.split(/\./g);
     var sntncList = [commaSplitList[0]];

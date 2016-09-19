@@ -1,3 +1,5 @@
+/* the code in this file deal with the management of words and contexts (executed when the user clicks on the extension icon */
+
 function clickClearAll(e) {
 	if(confirm("sure?")){
 		localStorage.clear();
@@ -49,7 +51,10 @@ function saveAsJson(e) {
 }
 
 
-
+/* 
+   this function is called when clicking the 'Clear Checked' button
+   it clears all the checked items from the local storage
+*/
 function clickChecked(e){
     $("input").each(function(){
 		var thisCheck = $(this);
@@ -94,6 +99,7 @@ function safe_json_parse(word){
     }
 }
 
+/* generate the html file that shows all the words and their contexts in the local storage*/
 $(document).ready(function(){
     console.log("in manage ready");
     // Add event listeners once the DOM has fully loaded by listening for the
