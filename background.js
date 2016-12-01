@@ -1,10 +1,10 @@
 var id = chrome.contextMenus.create({"title": "add to my voc", "contexts": ["selection"], "onclick": onClick});
-console.log("'" + "' item:" + id);
+console.log("item: " + id);
 
 
 
 //---------------------------------------------------------------------------
-// 
+//
 //---------------------------------------------------------------------------
 
 function onClick(info, tab) {
@@ -17,9 +17,9 @@ function onClick(info, tab) {
       chrome.tabs.executeScript(tab.id, {file: 'getSel.js'});
   }
 }
- 
+
 //---------------------------------------------------------------------------
-// 
+//
 //---------------------------------------------------------------------------
 
 chrome.browserAction.onClicked.addListener(function(tab) {
@@ -32,7 +32,7 @@ chrome.browserAction.onClicked.addListener(function(tab) {
 //---------------------------------------------------------------------------
 // the message which is sent from getSel.js is a dictionary of a context of a word
 //---------------------------------------------------------------------------
-chrome.extension.onRequest.addListener(function(message, sender, sendResponse) {    
+chrome.extension.onRequest.addListener(function(message, sender, sendResponse) {
     var contexts;
     var def;
     var origWord = message.word;
@@ -40,12 +40,12 @@ chrome.extension.onRequest.addListener(function(message, sender, sendResponse) {
     console.log("in chrome.extension.onRequest.addListener");
     console.log("usrWord="+usrWord);
 
-	
-    
+
+
     $.get("http://www.dictionaryapi.com/api/v1/references/learners/xml/"+usrWord+"?key=1fa5d878-17a4-493f-b8c1-24966bf2c6db",
     	  function(data,text){
               var jdata = $(data);
-              def = jdata.find('dt').map(function() {// map is a callback, that means it asynchronius. 
+              def = jdata.find('dt').map(function() {// map is a callback, that means it asynchronius.
                   return $(this).text();
               }).get();
 
@@ -63,9 +63,9 @@ chrome.extension.onRequest.addListener(function(message, sender, sendResponse) {
 		  /* in case we found a valid definition from the www.dictionaryapi.com
 		     we should see if we already have this word in the local storage*/
 		  contexts = JSON.parse(localStorage.getItem(canonWord));
-		  
+
 		  /* word does not exist in the local storage: - add it*/
-		  if(contexts === null){ 
+		  if(contexts === null){
 		      console.log("background: first ctx for the word\n"+message.context);
 		      contexts = [{ctx:message.context,orig_word:origWord}];
 		  }
@@ -74,14 +74,14 @@ chrome.extension.onRequest.addListener(function(message, sender, sendResponse) {
 		      console.log("found new ctx");
 		      contexts.push({ctx:message.context,orig_word:origWord});
 		  }
-		  console.log("background: contexts=\n"+JSON.stringify(contexts));	
+		  console.log("background: contexts=\n"+JSON.stringify(contexts));
 		  localStorage.setItem(canonWord,JSON.stringify(contexts));
-		  
+
 		  /* create the popup with the list of contxts and the definition */
 		  console.log("about to create");
 		  chrome.windows.create({url: "show_contexts_jquery.html", type: "popup", width: 500, height: 600, left: 200, top: 20}, function(tab){
 		      /* this will be executed right after the create , before the html's js will run, so here we should add listener to the created html*/
-		      
+
 		      /* the listerner listen to the sendrequest from the show_contexts_jquery.js and will responde
 		         with the word and the context
 		      */
@@ -98,8 +98,5 @@ chrome.extension.onRequest.addListener(function(message, sender, sendResponse) {
 
 		  });//end of windown.create callback
 	      }
-    	  }, "xml"); 
+    	  }, "xml");
 });
-
-
-                              
