@@ -22,9 +22,9 @@ chrome.runtime.sendMessage({popup_ready : "ready"},
 	function(response) {/* create a nice popup with the definition of the word and a list of it's contexts */
 
 
-		console.log("show_contexts_jquery: in message listener "+response.canonWord);
-		var contexts = response.contexts;
-		var canonWord =  response.canonWord;
+       console.log("show_contexts_jquery: in message listener "+response.canonWord);
+       var contexts = response.contexts;
+       var canonWord =  response.canonWord;
        var def =  response.def; // an array
        
        $("body").append("<h1>Familiar</h1>");
@@ -56,9 +56,12 @@ chrome.runtime.sendMessage({popup_ready : "ready"},
 
        if(def !== undefined){       	
 
+
+	//   $("body").append(def);
+	   
        	var ul = $("<ul>").appendTo("body");    	
-       	for(var i=0;i<Math.min(def.length,4);i++){
-       		$("<li>"+def[i].substr(1)+"</li>").appendTo(ul);
+       	for(var i=0;i<Math.min(def.length,20);i++){
+       		$("<li>"+def[i]/*.substr(1)*/+"</li>").appendTo(ul);
        	}
        } else {
        	$("body").append("<p>No definition found.</p>");
