@@ -42,17 +42,26 @@ chrome.extension.onRequest.addListener(function(message, sender, sendResponse) {
 
 
 
-    $.get("http://www.dictionaryapi.com/api/v1/references/learners/xml/"+usrWord+"?key=1fa5d878-17a4-493f-b8c1-24966bf2c6db",
+    //$.get("http://www.dictionaryapi.com/api/v1/references/learners/xml/"+usrWord+"?key=1fa5d878-17a4-493f-b8c1-24966bf2c6db",
+    $.get("https://en.wiktionary.org/wiki/"+usrWord,
     	  function(data,text){
+
+	      console.log("data: "+data);
+	      console.log("$(data): "+$(data));
+	      console.log("$(text): "+text);
+	      
               var jdata = $(data);
-              def = jdata.find('dt').map(function() {// map is a callback, that means it asynchronius.
+	      //def = jdata;
+              def = jdata.find('li').map(function() {// map is a callback, that means it asynchronius.
                   return $(this).text();
               }).get();
 
-	      /* jdata is the definition retrived from the dictionaryapi */
-	      /* we should parse it */
-              canonWord=jdata.find('entry').first().attr('id');
+	      // jdata is the definition retrived from the dictionaryapi 
+	      // we should parse it 
+
+	      canonWord=usrWord // jdata.find('entry').first().attr('id');
 	      console.log("background: canon #"+canonWord+"#");
+	      
 	      if(typeof(canonWord) == 'undefined')
 	      {
 		  alert("could not find the word");
@@ -60,10 +69,19 @@ chrome.extension.onRequest.addListener(function(message, sender, sendResponse) {
 	      }
 	      else
 	      {
+
 		  /* in case we found a valid definition from the www.dictionaryapi.com
 		     we should see if we already have this word in the local storage*/
 		  contexts = JSON.parse(localStorage.getItem(canonWord));
+		  console.log("dfsdfdsf@@@@@@@@@@@@@@@@@@@@@@@@2")
+		  console.log(localStorage.getItem(canonWord))
 
+		  /*
+		  chrome.storage.local.get(canonWord, function(items) {
+		      console.log("StorageArea cb: "+items)
+		  });
+		  */
+		  
 		  /* word does not exist in the local storage: - add it*/
 		  if(contexts === null){
 		      console.log("background: first ctx for the word\n"+message.context);
@@ -76,6 +94,14 @@ chrome.extension.onRequest.addListener(function(message, sender, sendResponse) {
 		  }
 		  console.log("background: contexts=\n"+JSON.stringify(contexts));
 		  localStorage.setItem(canonWord,JSON.stringify(contexts));
+		  console.log("sadasd asdasd")
+
+		  /***********/
+		  //chrome.storage.sync.set({canonWord : contexts}, function() {
+		      // Notify that we saved.
+		  //    console.log('Settings saved');
+		 // });
+		  /**********/
 
 		  /* create the popup with the list of contxts and the definition */
 		  console.log("about to create");

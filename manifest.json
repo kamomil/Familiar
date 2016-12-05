@@ -8,12 +8,14 @@
             },
   "background": { "scripts": ["background.js", "jquery-1.8.2.js"] },
   "permissions": [
-    "http://*/*",
-    "https://*/*",
-    "file:///home/*",
-    "contextMenus",
-    "tabs"
+      "storage",
+      "http://*/*",
+      "https://*/*",
+      "file:///home/*",
+      "contextMenus",
+      "tabs"
   ],
+
   "browser_action": {
       "default_name": "F",
       "default_icon": "icon.png" 
