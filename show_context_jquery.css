@@ -1,13 +1,14 @@
 body {
+	background-color: #fafafa;
 	color:#333;
 }
 
 
-h1 {
-	font-family: 'Chewy', cursive;
-	color:hotpink;
+h1, h2, h3 {
+/*	font-family: 'Chewy', cursive;*/
+	color: #337ab7;
 }
 
 #word {
-	color:orangered;
+	color: #990000;
 }
