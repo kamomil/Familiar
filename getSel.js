@@ -1,8 +1,3 @@
-
-
-
-
-
 if(sel){
 	console.log("getSel.js: sel before :"+sel.toString());
 }
@@ -25,26 +20,24 @@ var word = wordRegex.exec(selStr);
 if(word !== null){
     var continue_to_upper_parent = range.endContainer.isEqualNode(range.startContainer);
     word=word[0];
-    if(confirm("The word is \""+word+"\". Is it what you meant? ")== true){
-	var container = range.commonAncestorContainer;		
-	range.selectNode(container);
-	
-	if(continue_to_upper_parent){
-	    container = range.commonAncestorContainer; 
-	    range.selectNodeContents(container);
-	}
-	//alert(range.toString());
-	console.log("getSel.js: range.toString=\n"+range.toString());
-	var ctx = range.toString();
-	ctx = naiveSentenceRec(ctx,word);
-	if(ctx===""){
-	    alert("You miss selected the word");
-	}
-	else{
-	    chrome.extension.sendRequest({word:word,context:ctx});
-	}
-    }
     
+    var container = range.commonAncestorContainer;		
+    range.selectNode(container);
+	
+    if(continue_to_upper_parent){
+	container = range.commonAncestorContainer; 
+	range.selectNodeContents(container);
+    }
+    //alert(range.toString());
+    console.log("getSel.js: range.toString=\n"+range.toString());
+    var ctx = range.toString();
+    ctx = naiveSentenceRec(ctx,word);
+    if(ctx===""){
+	alert("You miss selected the word");
+    }
+    else{
+	chrome.extension.sendRequest({word:word,context:ctx});
+    }    
 }
 else{
 	alert("the selected string is not a word");

@@ -54,12 +54,12 @@ chrome.runtime.sendMessage({popup_ready : "ready"},
 
        $("body").append("<h3>Definition</h3>");
 
-       if(def !== undefined){       	
+       if(def !== undefined || def.length == 0){       	
 
 
 	//   $("body").append(def);
 	   
-       	var ul = $("<ul>").appendTo("body");    	
+       	var ul = $("<ul>").appendTo("body"); 
        	for(var i=0;i<Math.min(def.length,20);i++){
        		$("<li>"+def[i]/*.substr(1)*/+"</li>").appendTo(ul);
        	}

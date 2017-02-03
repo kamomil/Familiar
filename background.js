@@ -41,10 +41,7 @@ chrome.extension.onRequest.addListener(function(message, sender, sendResponse) {
     console.log("usrWord="+usrWord);
 
 
-
-    //$.get("http://www.dictionaryapi.com/api/v1/references/learners/xml/"+usrWord+"?key=1fa5d878-17a4-493f-b8c1-24966bf2c6db",
-    $.get("https://en.wiktionary.org/wiki/"+usrWord,
-    	  function(data,text){
+    function process_dict_result(data,text){
 
 	      console.log("data: "+data);
 	      console.log("$(data): "+$(data));
@@ -124,5 +121,9 @@ chrome.extension.onRequest.addListener(function(message, sender, sendResponse) {
 
 		  });//end of windown.create callback
 	      }
-    	  }, "xml");
+    }
+
+    //$.get("http://www.dictionaryapi.com/api/v1/references/learners/xml/"+usrWord+"?key=1fa5d878-17a4-493f-b8c1-24966bf2c6db",
+    $.get("https://en.wiktionary.org/wiki/"+usrWord,
+    	  function(data,text){process_dict_result(data,text);}, "xml").fail(function(data,text){alert("failed "+text); process_dict_result(data,text);});
 });
