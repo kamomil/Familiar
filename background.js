@@ -16,6 +16,18 @@ var tab_code = `
     console.log(range);
     range.toString();
 `
+const popup_win_data = {
+    url: "popup.html",
+    type: "popup",
+    width: 500,
+    height: 600,
+    left: 200,
+    top: 20
+}
+
+var global_canon_word;
+var global_contexts;
+var global_def;
 
 function onClick(info, tab) {
     console.log("in generic click: ");
@@ -37,45 +49,22 @@ function onClick(info, tab) {
             alert("You miss selected the word");
         }
         else{
-            var def = null;
-            var canonWord = word.replace(/\W+/,"-").toLowerCase();
-            var contexts = update_contexts(info.selectionText,canonWord,ctx)
-
+            var created_tab = null;
             function process_def(data,text){
-                def = 1
                 var jdata = $(data);
-                def = jdata.find('li').map(function() {
+                global_def = jdata.find('li').map(function() {
                     return $(this).text();
                 }).get();
-                def = 1;
-                console.log("in process def")
-                console.log(def)
+                if(created_tab !== null) {
+                    chrome.tabs.sendMessage(created_tab.id, global_def);
+                }
             }
-            $.get("https://en.wiktionary.org/wiki/"+canonWord, process_def ).fail(process_def);
+            global_canon_word = word.replace(/\W+/,"-").toLowerCase();
+            global_contexts = update_contexts(info.selectionText,global_canon_word,ctx)
+            $.get("https://en.wiktionary.org/wiki/"+global_canon_word, process_def ).fail(process_def);
+            chrome.windows.create(popup_win_data, function(window) {created_tab = window.tabs[0]} )
         }
      });
-}
-
-function create_window(){
-    console.log("about to create");
-      chrome.windows.create({url: "show_contexts_jquery.html", type: "popup", width: 500, height: 600, left: 200, top: 20}, function(tab){
-          /* this will be executed right after the create , before the html's js will run, so here we should add listener to the created html*/
-
-          /* the listerner listen to the sendrequest from the show_contexts_jquery.js and will responde
-             with the word and the context
-          */
-          chrome.runtime.onMessage.addListener(function listen(request, sender, sendResponse) {
-          console.log("in popup listener "+sender.tab);
-          console.log(request);
-          if (request.popup_ready)
-          {
-              console.log("got popup ready "+ canonWord);
-              sendResponse({"def" : def, "canonWord": canonWord, "contexts" : contexts});
-              chrome.runtime.onMessage.removeListener(listen);/* need to remove previous listener so there will always be only one*/
-          }
-          });//end of listener
-
-      });//end of windown.create callback
 }
 
 function update_contexts(origWord, canonWord, new_context){
