@@ -6,7 +6,7 @@
               "128": "icons/orange-f1.ico",
               "128": "icons/orange-f2.ico"
             },
-  "background": { "scripts": ["background.js", "jquery-1.8.2.js"] },
+  "background": { "scripts": ["background.js", "jquery-3.3.1.js"] },
   "permissions": [
       "storage",
       "http://*/*",
