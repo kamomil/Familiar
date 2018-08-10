@@ -90,16 +90,30 @@ function clickChecked(e){
 
 function safe_json_parse(word){
     try{
-	var contexts = JSON.parse(localStorage.getItem(word));
-	return contexts;
+        item = localStorage.getItem(word)
+        console.log('--item--')
+        console.log(item)
+        console.log('--json--')
+        console.log(JSON.parse(item))
+
+        var contexts = JSON.parse(localStorage.getItem(word));
+        return contexts;
     }
     catch(err){
-	console.error("JSON could not parse "+ localStorage.getItem(word));
-	return null;
+        console.error("JSON could not parse "+ localStorage.getItem(word));
+        return [];
     }
 }
 
-/* generate the html file that shows all the words and their contexts in the local storage*/
+function mustache_render(jquey_id, view) {
+  var tag = $(jquey_id);
+  console.log(view)
+  var rendered = Mustache.to_html(tag.html(), view);
+  console.log(rendered)
+  $(tag).html(rendered);
+}
+
+
 $(document).ready(function(){
     console.log("in manage ready");
     // Add event listeners once the DOM has fully loaded by listening for the
@@ -111,21 +125,21 @@ $(document).ready(function(){
     
     var length =localStorage.length;
     console.log("length of local storage = "+length);
+    console.log(localStorage)
+    view = []
     for(var i=0;i<length;i++){
-	var word = localStorage.key(i);
-	if (word !== null){
-	    console.log("word"+i+": "+word);
-	    $("body").append("<br><br><input type=\"checkbox\" name=\"word\" value=\""+word+"\" id=\""+i+"_"+word+"\"> WORD: "+word+"<br>");
-	    console.log("after JSON parse ");
-	    var contexts = safe_json_parse(word);
-	    if(contexts !== null){
-		console.log("not nu " + contexts);
-		for(var j=0 ; j<contexts.length ; j++){	 
-		    $("body").append("<input type=\"checkbox\" name=\"context\" value=\""+word+"\"  id=\""+i+"."+j+"\">"+contexts[j].ctx+"<br>");
-		}
-	    }  
+        var word = localStorage.key(i);
+        if (word !== null){
+
+            var contexts = safe_json_parse(word);
+            if(contexts)
+                view.push({"word" : word, "contexts" : contexts})
+        }
 	}
-    }
+
+	mustache_render('#words', {"words" : view})
+
+
     $('input[name="word"]').bind('click', function ()
                                {
                                    var thisCheck = $(this);

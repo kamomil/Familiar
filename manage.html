@@ -1,10 +1,21 @@
 <html>
 <body>
 <script src="jquery-3.3.1.js"></script>
+<script src="mustache.js"></script>
 <script src="manage.js"></script>
 <button id="clearAll">Clear All</button>
 <button id="clearChecked">Clear Checked</button>
 <button id="save">Save</button>
 
+<ol id="words">
+{{#words}}
+<li><input type="checkbox" name="word" value="{{word}}" > {{word}} </li>
+{{#contexts}}
+* <input type="checkbox" name="context" value="{{word}}" > {{{ctx}}}<br>
+{{/contexts}}
+<br>
+<br>
+{{/words}}
+</ol>
 </body>
 </html>
