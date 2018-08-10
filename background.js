@@ -1,4 +1,4 @@
-var id = chrome.contextMenus.create({"title": "add to my voc", "contexts": ["selection"], "onclick": onClick});
+var id = chrome.contextMenus.create({"title": "Familiarize!", "contexts": ["selection"], "onclick": onClick});
 console.log("item: " + id);
 
 
@@ -27,7 +27,6 @@ const popup_win_data = {
 
 var global_canon_word;
 var global_contexts;
-var global_def;
 
 function onClick(info, tab) {
     console.log("in generic click: ");
@@ -50,18 +49,27 @@ function onClick(info, tab) {
         }
         else{
             var created_tab = null;
-            function process_def(data,text){
-                var jdata = $(data);
-                global_def = jdata.find('li').map(function() {
-                    return $(this).text();
-                }).get();
+//            function process_def(data,text){
+//                var jdata = $(data);
+//                global_def = jdata.find('li').map(function() {
+//                    return $(this).text();
+//                }).get();
+//                if(created_tab !== null) {
+//                    chrome.tabs.sendMessage(created_tab.id, global_def);
+//                }
+//            }
+
+            function process_def_json(data,text){
+                global_def = {'en' : data.en}
                 if(created_tab !== null) {
                     chrome.tabs.sendMessage(created_tab.id, global_def);
                 }
             }
+
             global_canon_word = word.replace(/\W+/,"-").toLowerCase();
             global_contexts = update_contexts(info.selectionText,global_canon_word,ctx)
-            $.get("https://en.wiktionary.org/wiki/"+global_canon_word, process_def ).fail(process_def);
+            //$.get("https://en.wiktionary.org/wiki/"+global_canon_word, process_def ).fail(process_def);
+            $.get("https://en.wiktionary.org/api/rest_v1/page/definition/"+global_canon_word, process_def_json ).fail(process_def_json);
             chrome.windows.create(popup_win_data, function(window) {created_tab = window.tabs[0]} )
         }
      });

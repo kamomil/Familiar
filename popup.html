@@ -10,9 +10,20 @@
 </head>
 <body>
 <h1>Familiar</h1>
-<div id="template">
-Hello {{ name }}!
-</div>
-
+<h2 id="canon">{{canonWord}}</h2>
+<h3>Contexts</h3>
+<ol id="contexts">
+	{{#contexts}}
+	<li>{{{.}}}</li>
+	{{/contexts}}
+</ol>
+<h3>Definitions:</h3>
+<ol id="def">
+{{#en}}
+{{#definitions}}
+<li>{{{definition}}}</li>
+{{/definitions}}
+{{/en}}
+</ol>
 </body>
 </html>
