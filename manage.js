@@ -1,4 +1,8 @@
-/* the code in this file deal with the management of words and contexts (executed when the user clicks on the extension icon */
+
+
+/* the code in this file deal with the management of words and contexts
+(executed when the user clicks on the extension icon */
+
 
 function clickClearAll(e) {
 	if(confirm("sure?")){
@@ -7,25 +11,7 @@ function clickClearAll(e) {
 	}
 }
 
-/*
-See http://stackoverflow.com/questions/2897619/using-html5-javascript-to-generate-and-save-a-file
-*/
 
-function localStorage_to_json(){
-	
-    jarr = [];
-    var length =localStorage.length;
-    for(var i=0;i<length;i++){
-	var word = localStorage.key(i);
-	if (word !== null){
-	    console.log("localStorage_to_json: word"+i+": "+word);
-	    var contexts = JSON.parse(localStorage.getItem(word));
-	    jarr.push({word:word,contexts:contexts});
-	}
-    }
-    console.log(jarr);
-    return {"words" : jarr};
-}
 function saveAsJson(e) {
 	
 	function download(filename, text) {
@@ -47,7 +33,7 @@ function saveAsJson(e) {
 		}
 		
 	}
-	download('test.json', JSON.stringify(localStorage_to_json));
+	download('test.json', JSON.stringify(localStorage_to_json()));
 }
 
 
@@ -87,34 +73,51 @@ function clickChecked(e){
 	location.reload();
 }
 
-
-function safe_json_parse(word){
-    try{
-        item = localStorage.getItem(word)
-        console.log('--item--')
-        console.log(item)
-        console.log('--json--')
-        console.log(JSON.parse(item))
-
-        var contexts = JSON.parse(localStorage.getItem(word));
-        return contexts;
-    }
-    catch(err){
-        console.error("JSON could not parse "+ localStorage.getItem(word));
-        return [];
-    }
-}
-
 function mustache_render(jquey_id, view) {
   var tag = $(jquey_id);
-  console.log(view)
   var rendered = Mustache.to_html(tag.html(), view);
-  console.log(rendered)
   $(tag).html(rendered);
 }
 
 
 $(document).ready(function(){
+
+    console.log(document.getElementById('selectFiles').onclick)
+
+    //https://stackoverflow.com/a/40581284/1019140
+    //Trigger now when you have selected any file
+    $("#selectFiles").change(function(e) {
+          var files = document.getElementById('selectFiles').files;
+
+          if (files.length <= 0) {
+            return false;
+          }
+
+          var fr = new FileReader();
+
+          fr.onload = function(e) {
+
+              try{
+                var json = JSON.parse(e.target.result);
+              }
+              catch(err){
+                alert('bad json file')
+              }
+              console.log(json)
+              if(!localstorage_validate_json(json)){
+                console.log('invalid json')
+                return
+              }
+              localstorage_add_from_json(json)
+          }
+          fr.readAsText(files.item(0));
+    })
+
+    $('#selectFiles').on('click touchstart' , function(){
+        $(this).val('');
+    });
+
+
     console.log("in manage ready");
     // Add event listeners once the DOM has fully loaded by listening for the
     // `DOMContentLoaded` event on the document, and adding your listeners to
@@ -122,22 +125,9 @@ $(document).ready(function(){
     $('#clearAll').bind('click',clickClearAll);
     $("#clearChecked").bind('click', clickChecked);
     $("#save").bind('click', saveAsJson);
-    
-    var length =localStorage.length;
-    console.log("length of local storage = "+length);
-    console.log(localStorage)
-    view = []
-    for(var i=0;i<length;i++){
-        var word = localStorage.key(i);
-        if (word !== null){
 
-            var contexts = safe_json_parse(word);
-            if(contexts)
-                view.push({"word" : word, "contexts" : contexts})
-        }
-	}
-
-	mustache_render('#words', {"words" : view})
+    view = localStorage_to_json()
+	mustache_render('#words', view)
 
 
     $('input[name="word"]').bind('click', function ()

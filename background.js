@@ -75,26 +75,7 @@ function onClick(info, tab) {
      });
 }
 
-function update_contexts(origWord, canonWord, new_context){
 
-      contexts = JSON.parse(localStorage.getItem(canonWord))
-      console.log(localStorage.getItem(canonWord))
-
-      /* word does not exist in the local storage: - add it*/
-      if(contexts === null){
-          console.log("background: first ctx for the word\n"+new_context);
-          contexts = [{ctx:new_context,orig_word:origWord}];
-      }
-      /* word already exist - add the current context to the existing list of contexts for this word*/
-      else{
-          console.log("found new ctx");
-          contexts.push({ctx:new_context,orig_word:origWord});
-      }
-      console.log("background: contexts=\n"+JSON.stringify(contexts));
-      localStorage.setItem(canonWord,JSON.stringify(contexts));
-
-      return contexts;
-}
 
 /*
 given a paragraph and a word , return the senetence in the paragraph where the word appear.
