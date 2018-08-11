@@ -1,6 +1,6 @@
 {
   "name": "Familiar",
-  "version": "0.1",
+  "version": "0.0.1",
   "description": "Helps with improving vocabulary by saving all words you ever ancountered",
   "icons": { "128": "icon128.png",
               "48": "icon48.png",
