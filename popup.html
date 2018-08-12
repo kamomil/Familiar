@@ -5,6 +5,7 @@
 	<script src="jquery-3.3.1.js"></script>
 	<link rel="stylesheet" type="text/css" href="popup.css">
 	<script src="mustache.js"></script>
+	<script src="localstorage.js"></script>
 	<script src="popup.js"></script>
 	<link href="https://fonts.googleapis.com/css?family=Chewy" rel="stylesheet">
 </head>
@@ -14,7 +15,7 @@
 <h3>Contexts</h3>
 <ol id="contexts">
 	{{#contexts}}
-	<li>{{{.}}}</li>
+	<li>{{{ctx}}}</li>
 	{{/contexts}}
 </ol>
 <h3>Definitions:</h3>

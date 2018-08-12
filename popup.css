@@ -9,6 +9,7 @@ h1, h2, h3 {
 	color: #337ab7;
 }
 
-#word {
+.word {
 	color: #990000;
+	font-weight: bold;
 }

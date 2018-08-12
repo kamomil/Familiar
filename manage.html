@@ -1,13 +1,28 @@
 <html>
+<head>
+<link rel="stylesheet" type="text/css" href="manage.css">
+</head>
 <body>
 <script src="jquery-3.3.1.js"></script>
 <script src="localstorage.js"></script>
 <script src="mustache.js"></script>
 <script src="manage.js"></script>
-<button id="clearAll">Clear All</button>
+
+<div class="buttons">
+<button id="clearAll">Clear All Words</button>
+    <span class="explain">Click to clear all the words and contexts</span>
+</div>
+<div class="buttons">
 <button id="clearChecked">Clear Checked</button>
-<button id="save">Save</button>
-<input type="file" id="selectFiles" value="Import" /><br />
+    <span class="explain">Clear chosen words - choose words and contexts to clear and click here to clear them</span>
+</div>
+<div class="buttons">
+<button id="save">Download json</button>
+    <span class="explain">Click to download as json format</span>
+</div>
+<div class="buttons">
+    <input type="file" id="selectFiles" value="Import" />
+</div>
 
 <ol id="words">
 {{#words}}

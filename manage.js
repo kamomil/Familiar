@@ -127,7 +127,8 @@ $(document).ready(function(){
     $("#save").bind('click', saveAsJson);
 
     view = localStorage_to_json()
-	mustache_render('#words', view)
+	mustache_render('#words', localStorage_json_set_html(view))
+	//mustache_render('#words', view)
 
 
     $('input[name="word"]').bind('click', function ()
