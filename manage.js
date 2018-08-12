@@ -109,6 +109,7 @@ $(document).ready(function(){
                 return
               }
               localstorage_add_from_json(json)
+              location.reload();
           }
           fr.readAsText(files.item(0));
     })
