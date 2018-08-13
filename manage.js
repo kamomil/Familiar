@@ -41,23 +41,22 @@ function saveAsJson(e) {
    this function is called when clicking the 'Clear Checked' button
    it clears all the checked items from the local storage
 */
-function clickChecked(e){
+function clearChecked(e){
     $("input").each(function(){
 		var thisCheck = $(this);
-		console.log("value="+thisCheck.attr("value"));
 	   if (thisCheck.is(':checked') && thisCheck.attr("name") === "word")
 	   {
 		   console.log("word input - remove ");
-		   localStorage.removeItem(thisCheck.attr("value"));
+		   localStorage.removeItem(thisCheck.attr("id"));
 	   }
 	   else if(thisCheck.is(':checked') && thisCheck.attr("name") === "context")
 	   {
 		   console.log("context input - remove ");
-		   var ctxS = localStorage.getItem(thisCheck.attr("value"));
-		   if(ctxS != null)
+		   var word = localStorage.getItem(thisCheck.attr("value"));
+		   if(word != null)
 		   {
-			   console.log("still exist");
-			   var contexts = JSON.parse(ctxS); 
+			   console.log("word exist");
+			   var contexts = JSON.parse(word);
 			   for(var j=0 ; j<contexts.length ; j++){	 
 					if(contexts[j].ctx === thisCheck.text())
 					{
@@ -74,11 +73,26 @@ function clickChecked(e){
 }
 
 function mustache_render(jquey_id, view) {
+
+//    var data;
+//    data.view = view
+//    data.hash = function () {
+//        objectHash.sha1(this.view)
+//    }
+
+    var data = {
+       "view":view,
+        "hash": function () {
+        return objectHash.sha1(view)
+    }
+   };
+
+
+
   var tag = $(jquey_id);
-  var rendered = Mustache.to_html(tag.html(), view);
+  var rendered = Mustache.to_html(tag.html(), data);
   $(tag).html(rendered);
 }
-
 
 $(document).ready(function(){
 
@@ -88,13 +102,10 @@ $(document).ready(function(){
     //Trigger now when you have selected any file
     $("#selectFiles").change(function(e) {
           var files = document.getElementById('selectFiles').files;
-
           if (files.length <= 0) {
             return false;
           }
-
           var fr = new FileReader();
-
           fr.onload = function(e) {
 
               try{
@@ -124,34 +135,32 @@ $(document).ready(function(){
     // `DOMContentLoaded` event on the document, and adding your listeners to
     // specific elements when it triggers.
     $('#clearAll').bind('click',clickClearAll);
-    $("#clearChecked").bind('click', clickChecked);
+    $("#clearChecked").bind('click', clearChecked);
     $("#save").bind('click', saveAsJson);
 
+    var hash = objectHash.sha1({foo:'bar'});
+
+    console.log("==hash==");
+    console.log(hash);
+
     view = localStorage_to_json()
+    console.log(view);
+    console.log(objectHash.sha1(view));
 	mustache_render('#words', localStorage_json_set_html(view))
 	//mustache_render('#words', view)
 
 
     $('input[name="word"]').bind('click', function ()
-                               {
-                                   var thisCheck = $(this);
-                                   if (thisCheck.is(':checked'))
-                                   {
-                                       $('input[name="context"][value="'+thisCheck.attr("value")+'"]').attr('checked', true);
-
-                                   }
-                               });
-  $('input[name="context"]').bind('click', function ()
-                               {
-                                   var thisCheck = $(this);
-                                   if (! thisCheck.is(':checked'))
-                                   {
-                                       $('input[name="word"][value="'+thisCheck.attr("value")+'"]').attr('checked', false);
-
-                                   }
-                               });
-	
-	
-    
+                   {
+                       var thisCheck = $(this);
+                       if (thisCheck.is(':checked')){
+                           console.log("aaaa")
+                           $('input[name="context"][class="'+thisCheck.attr("class")+'"]').prop('checked',true);
+                       }
+                       else{
+                           console.log("bbbb")
+                           $('input[name="context"][class="'+thisCheck.attr("class")+'"]').prop('checked',false);
+                       }
+                   });
 });
 
