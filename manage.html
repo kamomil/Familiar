@@ -23,19 +23,20 @@
 </div>
 <div class="buttons">
     <input type="file" id="selectFiles" />
+    <span class="explain">Upload a json file to fill words</span>
 </div>
 
 <ol id="words">
-{{#view.words}}
+{{#words}}
 <li>
   <input type="checkbox" name="word" id="{{word}}" class="{{word}}_"> {{word}}<br>
 {{#contexts}}
-* <input type="checkbox" name="context" id={{hash}} class="{{word}}_" value="{{word}}">{{{ctx}}}<br>
+* <input type="checkbox" name="context" id="{{id}}" class="{{word}}_" value="{{word}}">{{{ctx}}}<br>
 </li>
 {{/contexts}}
 <br>
 <br>
-{{/view.words}}
+{{/words}}
 </ol>
 </body>
 </html>

@@ -42,6 +42,7 @@ function saveAsJson(e) {
    it clears all the checked items from the local storage
 */
 function clearChecked(e){
+    console.log("CLEAR CHECKED")
     $("input").each(function(){
 		var thisCheck = $(this);
 	   if (thisCheck.is(':checked') && thisCheck.attr("name") === "word")
@@ -52,20 +53,27 @@ function clearChecked(e){
 	   else if(thisCheck.is(':checked') && thisCheck.attr("name") === "context")
 	   {
 		   console.log("context input - remove ");
-		   var word = localStorage.getItem(thisCheck.attr("value"));
-		   if(word != null)
+
+		   var contexts_str = localStorage.getItem(thisCheck.attr("value"));
+		   if(contexts_str != null)
 		   {
 			   console.log("word exist");
-			   var contexts = JSON.parse(word);
+			   var contexts = JSON.parse(contexts_str);
 			   for(var j=0 ; j<contexts.length ; j++){	 
-					if(contexts[j].ctx === thisCheck.text())
+					if(contexts[j].id === thisCheck.attr("id"))
 					{
 						console.log("got the context");
-						localStorage.setItem(thisCheck.attr("value"),JSON.stringify(contexts.splice(j,1)));
+						console.log(contexts)
+						contexts.splice(j,1)
+						if(contexts.length == 0)
+						    localStorage.removeItem(thisCheck.attr("value"));
+						else
+						    localStorage.setItem(thisCheck.attr("value"),JSON.stringify(contexts));
 						break;
 					}
 				}
 		   }
+
 		   
 	   }
 	});
@@ -90,7 +98,9 @@ function mustache_render(jquey_id, view) {
 
 
   var tag = $(jquey_id);
-  var rendered = Mustache.to_html(tag.html(), data);
+  console.log("mustach")
+  console.log(view)
+  var rendered = Mustache.to_html(tag.html(), view);
   $(tag).html(rendered);
 }
 

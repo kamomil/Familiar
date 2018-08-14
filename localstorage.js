@@ -5,6 +5,7 @@ words: [
 
 {"word" : word,
  "contexts" : [{"ctx" : context, orig_word : orig_word}, ...]
+ "id" : id
  ...
 
  ]
@@ -22,7 +23,8 @@ function update_contexts(origWord, canonWord, new_context){
       /* word does not exist in the local storage: - add it*/
       if(contexts === null){
           console.log("background: first ctx for the word\n"+new_context);
-          contexts = [{ctx:new_context,orig_word:origWord}];
+          var hash = objectHash.sha1({ctx:new_context,orig_word:origWord});
+          contexts = [{ctx:new_context,orig_word:origWord, id:hash}];
       }
       /* word already exist - add the current context to the existing list of contexts for this word*/
       else{
@@ -34,7 +36,8 @@ function update_contexts(origWord, canonWord, new_context){
                     return contexts
                 }
           }
-          contexts.push({ctx:new_context,orig_word:origWord});
+          var hash = objectHash.sha1({ctx:new_context,orig_word:origWord});
+          contexts.push({ctx:new_context,orig_word:origWord, id:hash});
       }
       console.log("background: contexts=\n"+JSON.stringify(contexts));
       localStorage.setItem(canonWord,JSON.stringify(contexts));
@@ -55,13 +58,11 @@ function localStorage_json_set_html(json){
 
 
 function contexts_to_html(contexts){
-    html_ctx =  []
     for(var i=0 ; i<contexts.length ; i++){
         var origWordRgx = new RegExp (contexts[i].orig_word,'g');
-        ctx = contexts[i].ctx.replace(origWordRgx,'<span class="word">'+contexts[i].orig_word+'</span>');
-        html_ctx.push({ctx:ctx,orig_word:contexts[i].orig_word})
+        contexts[i].ctx = contexts[i].ctx.replace(origWordRgx,'<span class="word">'+contexts[i].orig_word+'</span>');
     }
-    return html_ctx
+    return contexts
 }
 
 //http://stackoverflow.com/questions/2897619/using-html5-javascript-to-generate-and-save-a-file
