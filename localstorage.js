@@ -57,6 +57,32 @@ function localStorage_json_set_html(json){
     return json
 }
 
+function remove_context(word,id){
+
+    var contexts_str = localStorage.getItem(word);
+    if(contexts_str != null)
+    {
+       console.log("word exist");
+       var contexts = JSON.parse(contexts_str);
+       for(var j=0 ; j<contexts.length ; j++){
+            if(contexts[j].id === id)
+            {
+                console.log("got the context");
+                console.log(contexts)
+                contexts.splice(j,1)
+                if(contexts.length == 0)
+                    localStorage.removeItem(word);
+                else
+                    localStorage.setItem(word,JSON.stringify(contexts));
+                return;
+            }
+        }
+    }
+
+
+
+}
+
 
 function contexts_to_html(contexts){
     for(var i=0 ; i<contexts.length ; i++){

@@ -42,40 +42,14 @@ function saveAsJson(e) {
    it clears all the checked items from the local storage
 */
 function clearChecked(e){
-    console.log("CLEAR CHECKED")
-    $("input").each(function(){
-		var thisCheck = $(this);
-	   if (thisCheck.is(':checked') && thisCheck.attr("name") === "word")
-	   {
-		   console.log("word input - remove ");
-		   localStorage.removeItem(thisCheck.attr("id"));
-	   }
-	   else if(thisCheck.is(':checked') && thisCheck.attr("name") === "context")
-	   {
-		   console.log("context input - remove ");
+    console.log("==clearChecked==")
+    $("input:checked").each(function(){
 
-		   var contexts_str = localStorage.getItem(thisCheck.attr("value"));
-		   if(contexts_str != null)
-		   {
-			   console.log("word exist");
-			   var contexts = JSON.parse(contexts_str);
-			   for(var j=0 ; j<contexts.length ; j++){	 
-					if(contexts[j].id === thisCheck.attr("id"))
-					{
-						console.log("got the context");
-						console.log(contexts)
-						contexts.splice(j,1)
-						if(contexts.length == 0)
-						    localStorage.removeItem(thisCheck.attr("value"));
-						else
-						    localStorage.setItem(thisCheck.attr("value"),JSON.stringify(contexts));
-						break;
-					}
-				}
-		   }
-
+	   if ($(this).attr("name") === "word")
+		   localStorage.removeItem($(this).attr("id"));
 		   
-	   }
+	   else if($(this).attr("name") === "context")
+           remove_context($(this).attr("value"),$(this).attr("id"))
 	});
 	location.reload();
 }
