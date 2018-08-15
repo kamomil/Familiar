@@ -82,21 +82,6 @@ function clearChecked(e){
 
 function mustache_render(jquey_id, view) {
 
-//    var data;
-//    data.view = view
-//    data.hash = function () {
-//        objectHash.sha1(this.view)
-//    }
-
-    var data = {
-       "view":view,
-        "hash": function () {
-        return objectHash.sha1(view)
-    }
-   };
-
-
-
   var tag = $(jquey_id);
   console.log("mustach")
   console.log(view)
@@ -148,15 +133,14 @@ $(document).ready(function(){
     $("#clearChecked").bind('click', clearChecked);
     $("#save").bind('click', saveAsJson);
 
-    var hash = objectHash.sha1({foo:'bar'});
-
-    console.log("==hash==");
-    console.log(hash);
-
     view = localStorage_to_json()
-    console.log(view);
-    console.log(objectHash.sha1(view));
-	mustache_render('#words', localStorage_json_set_html(view))
+    view = localStorage_json_set_html(view)
+    console.log(view)
+    if(view.words.length == 0)
+        view = {view:[]}
+    else
+        view = {view:view}
+	mustache_render('#words', view)
 	//mustache_render('#words', view)
 
 

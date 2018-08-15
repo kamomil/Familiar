@@ -15,16 +15,17 @@ words: [
 }
 */
 
-function update_contexts(origWord, canonWord, new_context){
-
+function update_contexts(origWord, canonWord, new_context,url){
+      console.log("==update_contexts==")
       contexts = JSON.parse(localStorage.getItem(canonWord))
-      console.log(localStorage.getItem(canonWord))
+      console.log(contexts)
+      console.log(url)
 
       /* word does not exist in the local storage: - add it*/
       if(contexts === null){
           console.log("background: first ctx for the word\n"+new_context);
-          var hash = objectHash.sha1({ctx:new_context,orig_word:origWord});
-          contexts = [{ctx:new_context,orig_word:origWord, id:hash}];
+          var hash = objectHash.sha1({ctx:new_context,orig_word:origWord,url:url});
+          contexts = [{ctx:new_context,orig_word:origWord, id:hash,url:url}];
       }
       /* word already exist - add the current context to the existing list of contexts for this word*/
       else{
@@ -36,8 +37,8 @@ function update_contexts(origWord, canonWord, new_context){
                     return contexts
                 }
           }
-          var hash = objectHash.sha1({ctx:new_context,orig_word:origWord});
-          contexts.push({ctx:new_context,orig_word:origWord, id:hash});
+          var hash = objectHash.sha1({ctx:new_context,orig_word:origWord,url:url});
+          contexts.push({ctx:new_context,orig_word:origWord, id:hash, url:url});
       }
       console.log("background: contexts=\n"+JSON.stringify(contexts));
       localStorage.setItem(canonWord,JSON.stringify(contexts));
@@ -67,6 +68,7 @@ function contexts_to_html(contexts){
 
 //http://stackoverflow.com/questions/2897619/using-html5-javascript-to-generate-and-save-a-file
 function localStorage_to_json(){
+    console.log("==localStorage_to_json==");
     view = []
     for(var i=0;i<localStorage.length;i++){
         var word = localStorage.key(i);
@@ -77,6 +79,7 @@ function localStorage_to_json(){
                 view.push({"word" : word, "contexts" : contexts})
         }
 	}
+	console.log(typeof view)
 	return {"words" : view};
 }
 
@@ -87,7 +90,7 @@ function localstorage_add_from_json(json){
         jc_wc = json['words'][i]
         lc_contexts = safe_json_parse(jc_wc.word);
         for(var k2 = 0;k2<jc_wc.contexts.length; k2++){
-            update_contexts(jc_wc.contexts[k2].orig_word,  jc_wc.word, jc_wc.contexts[k2].ctx)
+            update_contexts(jc_wc.contexts[k2].orig_word,  jc_wc.word, jc_wc.contexts[k2].ctx, jc_wc.contexts[k2].url)
         }
      }
 }
@@ -104,7 +107,9 @@ function localstorage_validate_json(json){
             return false
         }
         for(var j=0;j<wc.contexts.length; j++){
-            if(typeof wc.contexts[j].ctx != "string" || typeof wc.contexts[j].orig_word != "string" ){
+            if(typeof wc.contexts[j].ctx != "string"
+            || typeof wc.contexts[j].orig_word != "string"
+            || typeof wc.contexts[j].url != "string"){
                 console.log('wrong json 3')
                 return false
             }

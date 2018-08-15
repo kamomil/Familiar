@@ -9,6 +9,16 @@
 <script src="manage.js"></script>
 <script src="dist/object_hash.js" type="text/javascript"></script>
 
+<h1>Familiar</h1>
+
+    When you ecounter a word you don't know -
+    <ol>
+        <li>Select the word</li>
+        <li>Right click it</li>
+        <li>Familiarize it!</li>
+    </ol>
+
+
 <div class="buttons">
 <button id="clearAll">Clear All Words</button>
     <span class="explain">Click to clear all the words and contexts</span>
@@ -25,18 +35,27 @@
     <input type="file" id="selectFiles" />
     <span class="explain">Upload a json file to fill words</span>
 </div>
+<div id="words">
 
-<ol id="words">
-{{#words}}
+{{#view}}
+    <h3>Here are the words (in their contexts) you already encountered:</h3>
+    <ol>
+{{#view.words}}
 <li>
   <input type="checkbox" name="word" id="{{word}}" class="{{word}}_"> {{word}}<br>
 {{#contexts}}
-* <input type="checkbox" name="context" id="{{id}}" class="{{word}}_" value="{{word}}">{{{ctx}}}<br>
+* <input type="checkbox" name="context" id="{{id}}" class="{{word}}_" value="{{word}}">{{{ctx}}}<a href="{{url}}" target="_blank">{{url}}</a><br>
 </li>
 {{/contexts}}
 <br>
 <br>
-{{/words}}
-</ol>
+{{/view.words}}
+        </ol>
+{{/view}}
+{{^view}}
+    <h3>You didn't encounter any word yet</h3>
+{{/view}}
+</div>
+
 </body>
 </html>
