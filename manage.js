@@ -1,8 +1,6 @@
 
-
 /* the code in this file deal with the management of words and contexts
 (executed when the user clicks on the extension icon */
-
 
 function clickClearAll(e) {
 	if(confirm("sure?")){
@@ -11,29 +9,23 @@ function clickClearAll(e) {
 	}
 }
 
-
 function saveAsJson(e) {
 	
 	function download(filename, text) {
 		var pom = document.createElement('a');
 		pom.setAttribute('href', 'data:application/json;charset=utf-8,' + encodeURIComponent(text));
 		pom.setAttribute('download', filename);
-	
-		
-		console.log("here "+pom.getAttribute("href"));
+
 		if (document.createEvent ) {
-			console.log("here1 ");
 			var event = document.createEvent('MouseEvents');
 			event.initEvent('click', true, true);
 			pom.dispatchEvent(event);
 		}
 		else {
-			console.log("here2");
 			pom.click();
 		}
-		
 	}
-	download('test.json', JSON.stringify(localStorage_to_json()));
+	download('familiar.json', JSON.stringify(localStorage_to_json()));
 }
 
 
@@ -47,7 +39,7 @@ function clearChecked(e){
 
 	   if ($(this).attr("name") === "word")
 		   localStorage.removeItem($(this).attr("id"));
-		   
+
 	   else if($(this).attr("name") === "context")
            remove_context($(this).attr("value"),$(this).attr("id"))
 	});
@@ -57,15 +49,11 @@ function clearChecked(e){
 function mustache_render(jquey_id, view) {
 
   var tag = $(jquey_id);
-  console.log("mustach")
-  console.log(view)
   var rendered = Mustache.to_html(tag.html(), view);
   $(tag).html(rendered);
 }
 
 $(document).ready(function(){
-
-    console.log(document.getElementById('selectFiles').onclick)
 
     //https://stackoverflow.com/a/40581284/1019140
     //Trigger now when you have selected any file
@@ -83,9 +71,9 @@ $(document).ready(function(){
               catch(err){
                 alert('bad json file')
               }
-              console.log(json)
+
               if(!localstorage_validate_json(json)){
-                console.log('invalid json')
+                console.warning('invalid json')
                 return
               }
               localstorage_add_from_json(json)
@@ -98,37 +86,25 @@ $(document).ready(function(){
         $(this).val('');
     });
 
-
-    console.log("in manage ready");
-    // Add event listeners once the DOM has fully loaded by listening for the
-    // `DOMContentLoaded` event on the document, and adding your listeners to
-    // specific elements when it triggers.
     $('#clearAll').bind('click',clickClearAll);
     $("#clearChecked").bind('click', clearChecked);
     $("#save").bind('click', saveAsJson);
 
     view = localStorage_to_json()
     view = localStorage_json_set_html(view)
-    console.log(view)
+
     if(view.words.length == 0)
         view = {view:[]}
     else
         view = {view:view}
 	mustache_render('#words', view)
-	//mustache_render('#words', view)
-
 
     $('input[name="word"]').bind('click', function ()
-                   {
-                       var thisCheck = $(this);
-                       if (thisCheck.is(':checked')){
-                           console.log("aaaa")
-                           $('input[name="context"][class="'+thisCheck.attr("class")+'"]').prop('checked',true);
-                       }
-                       else{
-                           console.log("bbbb")
-                           $('input[name="context"][class="'+thisCheck.attr("class")+'"]').prop('checked',false);
-                       }
-                   });
+       {
+           if ($(this).is(':checked'))
+               $('input[name="context"][class="'+$(this).attr("class")+'"]').prop('checked',true);
+           else
+               $('input[name="context"][class="'+$(this).attr("class")+'"]').prop('checked',false);
+       });
 });
 
