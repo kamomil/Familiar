@@ -70,7 +70,7 @@ function remove_context(word,id){
 
 function contexts_to_html(contexts){
     for(var i=0 ; i<contexts.length ; i++){
-        var origWordRgx = new RegExp (contexts[i].orig_word,'g');
+        var origWordRgx = new RegExp ("\\b"+contexts[i].orig_word+"\\b",'g');
         contexts[i].ctx = contexts[i].ctx.replace(origWordRgx,'<span class="word">'+contexts[i].orig_word+'</span>');
     }
     return contexts
