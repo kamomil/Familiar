@@ -3,7 +3,7 @@
 <head>
 	<title>Popup</title>
 	<script src="jquery-3.3.1.js"></script>
-	<link rel="stylesheet" type="text/css" href="popup.css">
+	<link rel="stylesheet" type="text/css" href="familiar.css">
 	<script src="mustache.js"></script>
 	<script src="localstorage.js"></script>
 	<script src="popup.js"></script>
@@ -17,7 +17,7 @@
 	{{#contexts}}
 	<li>
 		<div>{{{ctx}}}</div>
-		<div><a href="{{url}}" target="_blank">{{url}}</a></div>
+		<div><a class="context" href="{{url}}" target="_blank">{{url}}</a></div>
 	</li>
 	{{/contexts}}
 </ol>

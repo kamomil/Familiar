@@ -1,6 +1,6 @@
 <html>
 <head>
-<link rel="stylesheet" type="text/css" href="manage.css">
+<link rel="stylesheet" type="text/css" href="familiar.css">
 </head>
 <body>
 <script src="jquery-3.3.1.js"></script>
@@ -11,7 +11,7 @@
 
 <h1>Familiar</h1>
 
-    When you ecounter a word you don't know -
+    When you encounter a word you don't know -
     <ol>
         <li>Select the word</li>
         <li>Right click it</li>
@@ -41,14 +41,16 @@
     <h3>Here are the words (in their contexts) you already encountered:</h3>
     <ol>
 {{#view.words}}
-<li>
-  <input type="checkbox" name="word" id="{{word}}" class="{{word}}_"> {{word}}<br>
+<li class="word">
+  <input type="checkbox" name="word" id="{{word}}" class="{{word}}_"> {{word}}
+
 {{#contexts}}
-* <input type="checkbox" name="context" id="{{id}}" class="{{word}}_" value="{{word}}">{{{ctx}}}<a href="{{url}}" target="_blank">{{url}}</a><br>
-</li>
+ <ul>
+     <li class="context"> <input type="checkbox" name="context" id="{{id}}" class="{{word}}_" value="{{word}}">{{{ctx}}}<a class="context" href="{{url}}" target="_blank">{{url}}</a></li>
+ </ul>
 {{/contexts}}
-<br>
-<br>
+
+</li>
 {{/view.words}}
         </ol>
 {{/view}}
