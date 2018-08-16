@@ -13,7 +13,7 @@ var tab_code = `
         range.selectNodeContents(container);
     }
     range.toString();
-`
+`;
 
 const popup_win_data = {
     url: "popup.html",
@@ -22,7 +22,7 @@ const popup_win_data = {
     height: 600,
     left: 200,
     top: 20
-}
+};
 
 var global_canon_word;
 var global_contexts;
@@ -37,7 +37,7 @@ function onClick(info, tab) {
     word = word[0];
     console.log(word);
     if(word === null)
-        return
+        return;
 
     chrome.tabs.executeScript(tab.id, {code: tab_code},
          function(range) {
@@ -50,18 +50,18 @@ function onClick(info, tab) {
                 var created_tab = null;
 
                 function process_def_json(data,text){
-                    console.log("==process_def_json==")
-                    console.log(text)
+                    console.log("==process_def_json==");
+                    console.log(text);
 
                     if(created_tab !== null) {
                         chrome.tabs.sendMessage(created_tab.id, data);
                     }
                 }
                 global_canon_word = word.toLowerCase();
-                global_contexts = update_contexts(info.selectionText,global_canon_word,ctx,tab.url)
+                global_contexts = update_contexts(info.selectionText,global_canon_word,ctx,tab.url);
                 //https://en.wiktionary.org/api/rest_v1/#!/Page_content/get_page_definition_term
                 $.get("https://en.wiktionary.org/api/rest_v1/page/definition/"+encodeURI(global_canon_word), process_def_json ).fail(process_def_json);
-                chrome.windows.create(popup_win_data, function(window) {created_tab = window.tabs[0]} )
+                chrome.windows.create(popup_win_data, function(window) {created_tab = window.tabs[0];} );
             }
          });
 }

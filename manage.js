@@ -34,14 +34,14 @@ function saveAsJson(e) {
    it clears all the checked items from the local storage
 */
 function clearChecked(e){
-    console.log("==clearChecked==")
+    console.log("==clearChecked==");
     $("input:checked").each(function(){
 
 	   if ($(this).attr("name") === "word")
 		   localStorage.removeItem($(this).attr("id"));
 
 	   else if($(this).attr("name") === "context")
-           remove_context($(this).attr("value"),$(this).attr("id"))
+           remove_context($(this).attr("value"),$(this).attr("id"));
 	});
 	location.reload();
 }
@@ -64,23 +64,24 @@ $(document).ready(function(){
           }
           var fr = new FileReader();
           fr.onload = function(e) {
-
+              var json_file;
               try{
-                var json = JSON.parse(e.target.result);
+                json_file = JSON.parse(e.target.result);
               }
               catch(err){
-                alert('bad json file')
+                alert('could not parse json file');
+                return;
               }
 
-              if(!localstorage_validate_json(json)){
-                console.warning('invalid json')
-                return
+              if(!localstorage_validate_json(json_file)){
+                console.warning('invalid json');
+                return;
               }
-              localstorage_add_from_json(json)
+              localstorage_add_from_json(json_file);
               location.reload();
-          }
+          };
           fr.readAsText(files.item(0));
-    })
+    });
 
     $('#selectFiles').on('click touchstart' , function(){
         $(this).val('');
@@ -90,14 +91,14 @@ $(document).ready(function(){
     $("#clearChecked").bind('click', clearChecked);
     $("#save").bind('click', saveAsJson);
 
-    view = localStorage_to_json()
-    view = localStorage_json_set_html(view)
+    view = localStorage_to_json();
+    view = localStorage_json_set_html(view);
 
     if(view.words.length == 0)
-        view = {view:[]}
+        view = {view:[]};
     else
-        view = {view:view}
-	mustache_render('#words', view)
+        view = {view:view};
+	mustache_render('#words', view);
 
     $('input[name="word"]').bind('click', function ()
        {

@@ -6,7 +6,7 @@ function mustache_render(jquey_id, view) {
   var tag = $(jquey_id);
   var rendered = Mustache.to_html(tag.html(), view);
   rendered = rendered.replace(new RegExp('href="/wiki', 'g'), 'target="_blank" href="https://en.wiktionary.org/wiki');
-  console.log(rendered)
+  console.log(rendered);
   $(tag).html(rendered);
 }
 
@@ -14,7 +14,7 @@ $(document).ready(function () {
 
     mustache_render('#canon' , {canonWord : canonWord});
 
-    html_ctx = {contexts : contexts_to_html(contexts)}
+    html_ctx = {contexts : contexts_to_html(contexts)};
     mustache_render('#contexts' , html_ctx);
 });
 
@@ -43,23 +43,20 @@ lang_codes = {
     "sk" : 	"Slovak",
     "sl" : 	"Slovenian",
     "sv" : 	"Swedish"
-}
+};
 
 chrome.runtime.onMessage.addListener(function(def, sender,resp) {
-   def.languages = []
+   def.languages = [];
    for (var property in def) {
         if (def.hasOwnProperty(property) && property != "languages") {
-            console.log(property)
-            console.log(def[property])
             if(lang_codes[property])
-                def.languages.unshift({lang:lang_codes[property],record:def[property]})
+                def.languages.unshift({lang:lang_codes[property],record:def[property]});
             else
-                console.log("Lang: "+property+" Not supported yet")
+                console.log("Lang: "+property+" Not supported yet");
 
         }
     }
-
-    mustache_render('#def', def)
+    mustache_render('#def', def);
 });
 
 
