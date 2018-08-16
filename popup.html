@@ -22,12 +22,18 @@
 	{{/contexts}}
 </ol>
 <h3>Definitions:</h3>
-<ol id="def">
-{{#en}}
+<div id="def">
+
+{{#languages}}
+	<h4>{{lang}}</h4>
+	<ol>
+{{#record}}
 {{#definitions}}
 <li>{{{definition}}}</li>
 {{/definitions}}
-{{/en}}
-</ol>
+{{/record}}
+	</ol>
+{{/languages}}
+</div>
 </body>
 </html>

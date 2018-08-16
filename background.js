@@ -51,15 +51,16 @@ function onClick(info, tab) {
 
                 function process_def_json(data,text){
                     console.log("==process_def_json==")
-                    global_def = {'en' : data.en}
+                    console.log(text)
+
                     if(created_tab !== null) {
-                        chrome.tabs.sendMessage(created_tab.id, global_def);
+                        chrome.tabs.sendMessage(created_tab.id, data);
                     }
                 }
-                global_canon_word = word.replace(/\W+/,"-").toLowerCase();
+                global_canon_word = word.toLowerCase();
                 global_contexts = update_contexts(info.selectionText,global_canon_word,ctx,tab.url)
                 //https://en.wiktionary.org/api/rest_v1/#!/Page_content/get_page_definition_term
-                $.get("https://en.wiktionary.org/api/rest_v1/page/definition/"+global_canon_word, process_def_json ).fail(process_def_json);
+                $.get("https://en.wiktionary.org/api/rest_v1/page/definition/"+encodeURI(global_canon_word), process_def_json ).fail(process_def_json);
                 chrome.windows.create(popup_win_data, function(window) {created_tab = window.tabs[0]} )
             }
          });
@@ -98,11 +99,11 @@ function naiveSentenceRec(paragraph ,word){
     for(var i=0;i<sntncList.length;i++){
 
         if(ctxRegex.test(sntncList[i])){
-            ctx = sntncList[i]+".";
+            ctx = sntncList[i];
             if(i>0 && ctx.length<LIMIT_CTX_LENGTH && sntncList[i-1].length<LIMIT_CTX_LENGTH)
                 ctx = sntncList[i-1]+"."+ctx;
             if(i+1<sntncList.length && ctx.length<LIMIT_CTX_LENGTH && sntncList[i+1]<LIMIT_CTX_LENGTH)
-                ctx = ctx+sntncList[i+1]+".";
+                ctx = ctx+"."+sntncList[i+1];
             return ctx;
         }
     }
