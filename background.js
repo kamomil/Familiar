@@ -42,6 +42,7 @@ function onClick(info, tab) {
     chrome.tabs.executeScript(tab.id, {code: tab_code},
          function(range) {
             ctx = naiveSentenceRec(range[0],word);
+            var ctx = ctx.replace(/(<([^>]+)>)/ig,"");
             if(ctx===""){
                 alert("You miss selected the word");
             }
