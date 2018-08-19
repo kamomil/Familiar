@@ -1,8 +1,8 @@
 {
   "name": "Familiar",
   "short_name": "Familiar",
-  "version": "0.0.1",
-  "description": "Helps with improving vocabulary by saving all words you ever ancountered",
+  "version": "0.0.5",
+  "description": "Helps with improving vocabulary by saving all words you ever encountered",
   "icons": { "128": "icon128.png",
               "48": "icon48.png",
               "32": "icon32.png",
