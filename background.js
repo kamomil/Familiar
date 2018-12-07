@@ -59,8 +59,15 @@ function onClick(info, tab) {
                 }
                 global_canon_word = word.toLowerCase();
                 global_contexts = update_contexts(info.selectionText,global_canon_word,ctx,tab.url);
+
+		function try_capital_case(){
+                    console.log("fail with lower case try again with First letter up");
+                    canon_first_upper =  global_canon_word.charAt(0).toUpperCase() + global_canon_word.slice(1);
+                    $.get("https://en.wiktionary.org/api/rest_v1/page/definition/"+encodeURI(canon_first_upper), process_def_json ).fail(process_def_json);
+		}
+
                 //https://en.wiktionary.org/api/rest_v1/#!/Page_content/get_page_definition_term
-                $.get("https://en.wiktionary.org/api/rest_v1/page/definition/"+encodeURI(global_canon_word), process_def_json ).fail(process_def_json);
+                $.get("https://en.wiktionary.org/api/rest_v1/page/definition/"+encodeURI(global_canon_word), process_def_json ).fail(try_capital_case);
                 chrome.windows.create(popup_win_data, function(window) {created_tab = window.tabs[0];} );
             }
          });
