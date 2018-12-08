@@ -53,6 +53,32 @@ function mustache_render(jquey_id, view) {
   $(tag).html(rendered);
 }
 
+function bla() {
+     chrome.identity.getAuthToken({interactive: true}, function(token) {
+       console.log(token);
+
+			 let init = {
+          method: 'POST',
+          async: true,
+          headers: {
+            'Authorization': 'Bearer ' + token,
+            'Content-Type': 'application/json',
+	    'Content-Disposition': 'filename="Fami.json'
+          },
+          'contentType': 'json',
+	  'body': '{"familiar" : "Yay!"}'
+        };
+        fetch(
+            'https://www.googleapis.com/upload/drive/v3/files?uploadType=media&name=blablabla',
+            init)
+            .then((response) => response.json())
+            .then(function(data) {
+              console.log(data)
+            });
+
+     });
+  }
+
 $(document).ready(function(){
 
     //https://stackoverflow.com/a/40581284/1019140
@@ -90,6 +116,7 @@ $(document).ready(function(){
     $('#clearAll').bind('click',clickClearAll);
     $("#clearChecked").bind('click', clearChecked);
     $("#save").bind('click', saveAsJson);
+    $('#GetAuth').bind('click',bla)
 
     view = localStorage_to_json();
     view = localStorage_json_set_html(view);
