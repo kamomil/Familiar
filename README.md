@@ -1,3 +1,4 @@
+[Familiar](https://chrome.google.com/webstore/detail/familiar/hpnebjlnefcefkkfflcokoafbojlbogc)
 background.js - contains listeners and define the functions that will be called when clicking
 the menu and the extension icon. It update the DB and creates the popup.
 
