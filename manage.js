@@ -53,6 +53,20 @@ function mustache_render(jquey_id, view) {
   $(tag).html(rendered);
 }
 
+
+mystr = '--foo_bar_baz' +
+    '\r\nContent-Type: application/json; charset=UTF-8' +
+    '\r\n' +
+    '\r\n{"name" : "familiar.json"}' +
+    '\r\n' +
+    '\r\n--foo_bar_baz' +
+    '\r\nContent-Type: application/json' +
+    '\r\n' +
+    '\r\n{"assd" : "asdasd"}' +
+    '\r\n' +
+    '\r\n--foo_bar_baz--'
+
+
 function bla() {
      chrome.identity.getAuthToken({interactive: true}, function(token) {
        console.log(token);
@@ -62,14 +76,13 @@ function bla() {
           async: true,
           headers: {
             'Authorization': 'Bearer ' + token,
-            'Content-Type': 'application/json',
-	    'Content-Disposition': 'filename="Fami.json'
+            'Content-Type': 'multipart/related; boundary=foo_bar_baz',
+            'Content-Length': mystr.length
           },
-          'contentType': 'json',
-	  'body': '{"familiar" : "Yay!"}'
+	  'body': mystr
         };
         fetch(
-            'https://www.googleapis.com/upload/drive/v3/files?uploadType=media&name=blablabla',
+            'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart',
             init)
             .then((response) => response.json())
             .then(function(data) {
