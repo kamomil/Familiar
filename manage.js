@@ -54,20 +54,22 @@ function mustache_render(jquey_id, view) {
 }
 
 
-mystr = '--foo_bar_baz' +
-    '\r\nContent-Type: application/json; charset=UTF-8' +
-    '\r\n' +
-    '\r\n{"name" : "familiar.json"}' +
-    '\r\n' +
-    '\r\n--foo_bar_baz' +
-    '\r\nContent-Type: application/json' +
-    '\r\n' +
-    '\r\n{"assd" : "asdasd"}' +
-    '\r\n' +
-    '\r\n--foo_bar_baz--'
 
 
-function bla() {
+
+function uploadToDrive() {
+    body = '--foo_bar_baz' +
+        '\r\nContent-Type: application/json; charset=UTF-8' +
+        '\r\n' +
+        '\r\n{"name" : "familiar.json"}' +
+        '\r\n' +
+        '\r\n--foo_bar_baz' +
+        '\r\nContent-Type: application/json' +
+        '\r\n' +
+        '\r\n' + JSON.stringify(localStorage_to_json()) +
+        '\r\n' +
+        '\r\n--foo_bar_baz--'
+
      chrome.identity.getAuthToken({interactive: true}, function(token) {
        console.log(token);
 
@@ -79,7 +81,7 @@ function bla() {
             'Content-Type': 'multipart/related; boundary=foo_bar_baz',
             'Content-Length': mystr.length
           },
-	  'body': mystr
+	  'body': body
         };
         fetch(
             'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart',
@@ -129,7 +131,7 @@ $(document).ready(function(){
     $('#clearAll').bind('click',clickClearAll);
     $("#clearChecked").bind('click', clearChecked);
     $("#save").bind('click', saveAsJson);
-    $('#GetAuth').bind('click',bla)
+    $('#UplodaToDrive').bind('click',uploadToDrive)
 
     view = localStorage_to_json();
     view = localStorage_json_set_html(view);
