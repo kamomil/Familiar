@@ -28,6 +28,9 @@ function saveAsJson(e) {
 	download('familiar.json', JSON.stringify(localStorage_to_json()));
 }
 
+function uploadToDrive(){
+    chrome.runtime.sendMessage("uploadToDrive");
+}
 
 /* 
    this function is called when clicking the 'Clear Checked' button
@@ -53,46 +56,6 @@ function mustache_render(jquey_id, view) {
   $(tag).html(rendered);
 }
 
-
-
-
-
-function uploadToDrive() {
-    body = '--foo_bar_baz' +
-        '\r\nContent-Type: application/json; charset=UTF-8' +
-        '\r\n' +
-        '\r\n{"name" : "familiar.json"}' +
-        '\r\n' +
-        '\r\n--foo_bar_baz' +
-        '\r\nContent-Type: application/json' +
-        '\r\n' +
-        '\r\n' + JSON.stringify(localStorage_to_json()) +
-        '\r\n' +
-        '\r\n--foo_bar_baz--'
-
-     chrome.identity.getAuthToken({interactive: true}, function(token) {
-       console.log(token);
-
-			 let init = {
-          method: 'POST',
-          async: true,
-          headers: {
-            'Authorization': 'Bearer ' + token,
-            'Content-Type': 'multipart/related; boundary=foo_bar_baz',
-            'Content-Length': mystr.length
-          },
-	  'body': body
-        };
-        fetch(
-            'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart',
-            init)
-            .then((response) => response.json())
-            .then(function(data) {
-              console.log(data)
-            });
-
-     });
-  }
 
 $(document).ready(function(){
 

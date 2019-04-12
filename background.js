@@ -128,3 +128,45 @@ chrome.browserAction.onClicked.addListener(function(tab) {
   });
 });
 
+//----------------------------------------------------
+//  a listerner to the massege sent from uploadToDrive
+//  it uploads the data to google drive
+//----------------------------------------------------
+
+chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
+    body = '--foo_bar_baz' +
+        '\r\nContent-Type: application/json; charset=UTF-8' +
+        '\r\n' +
+        '\r\n{"name" : "familiar.json"}' +
+        '\r\n' +
+        '\r\n--foo_bar_baz' +
+        '\r\nContent-Type: application/json' +
+        '\r\n' +
+        '\r\n' + JSON.stringify(localStorage_to_json()) +
+        '\r\n' +
+        '\r\n--foo_bar_baz--'
+
+    chrome.identity.getAuthToken({interactive: true}, function(token) {
+       console.log(token);
+       console.log(chrome.identity.AccountInfo)
+
+	    let init = {
+          method: 'POST',
+          async: true,
+          headers: {
+            'Authorization': 'Bearer ' + token,
+            'Content-Type': 'multipart/related; boundary=foo_bar_baz',
+            'Content-Length': body.length
+          },
+	  'body': body
+        };
+        fetch(
+            'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart',
+            init)
+            .then((response) => response.json())
+            .then(function(data) {
+              console.log(data)
+            });
+
+     });
+});
