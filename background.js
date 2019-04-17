@@ -58,7 +58,7 @@ function onClick(info, tab) {
                     }
                 }
                 global_canon_word = word.toLowerCase();
-                global_contexts = update_contexts(info.selectionText,global_canon_word,ctx,tab.url);
+                global_contexts = update_contexts(info.selectionText,global_canon_word,ctx,tab.url, Date());
 
 		function try_capital_case(){
                     console.log("fail with lower case try again with First letter up");

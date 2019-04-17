@@ -15,14 +15,15 @@ words: [
 }
 */
 
-function update_contexts(origWord, canonWord, new_context,url){
+function update_contexts(origWord, canonWord, new_context,url, date){
       console.log("==update_contexts==")
       contexts = JSON.parse(localStorage.getItem(canonWord))
-      var hash = objectHash.sha1({ctx:new_context,orig_word:origWord,url:url});
+      date = date || "" //old json versions (<0.0.7) have no date so default to empty string
+      var hash = objectHash.sha1({ctx:new_context,orig_word:origWord,url:url,date:date});
 
       /* word does not exist in the local storage: - add it*/
       if(contexts === null){
-          contexts = [{ctx:new_context,orig_word:origWord, id:hash,url:url}];
+          contexts = [{ctx:new_context,orig_word:origWord, id:hash,url:url,date:date}];
       }
       /* word already exist - add the current context to the existing list of contexts for this word*/
       else{
@@ -32,7 +33,7 @@ function update_contexts(origWord, canonWord, new_context,url){
                     return contexts
                 }
           }
-          contexts.push({ctx:new_context,orig_word:origWord, id:hash, url:url});
+          contexts.push({ctx:new_context,orig_word:origWord, id:hash, url:url,date:date});
       }
       localStorage.setItem(canonWord,JSON.stringify(contexts));
       return contexts;
@@ -99,7 +100,7 @@ function localstorage_add_from_json(json){
         jc_wc = json['words'][i]
         lc_contexts = safe_json_parse(jc_wc.word);
         for(var k2 = 0;k2<jc_wc.contexts.length; k2++){
-            update_contexts(jc_wc.contexts[k2].orig_word,  jc_wc.word, jc_wc.contexts[k2].ctx, jc_wc.contexts[k2].url)
+            update_contexts(jc_wc.contexts[k2].orig_word,  jc_wc.word, jc_wc.contexts[k2].ctx, jc_wc.contexts[k2].url, jc_wc.contexts[k2].date)
         }
      }
 }
