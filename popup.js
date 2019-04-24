@@ -1,6 +1,7 @@
 var background = chrome.extension.getBackgroundPage();
 var canonWord = background.global_canon_word;
 var contexts = background.global_contexts;
+var lastWordDate = background.global_last_word_date;
 
 function mustache_render(jquey_id, view) {
   var tag = $(jquey_id);

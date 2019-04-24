@@ -56,6 +56,41 @@ function mustache_render(jquey_id, view) {
   $(tag).html(rendered);
 }
 
+/*
+function localStorage_to_json(){
+    console.log("==localStorage_to_json==");
+    view = []
+    for(var i=0;i<localStorage.length;i++){
+        var word = localStorage.key(i);
+        if (word !== null){
+
+            var word_data = safe_localstorage_parse(word);
+            if(word_data)
+                view.push({"word" : word, "contexts" : word_data.contexts, "date" : word_data.date})
+        }
+	}
+	return {"words" : view};
+}
+}
+*/
+
+function sortByDate() {
+    view = localStorage_to_json();
+    view = localStorage_json_set_html(view);
+    view = view.words
+
+    view.sort(function(a, b) {
+        a = new Date(a.date);
+        b = new Date(b.date);
+        return a>b ? -1 : a<b ? 1 : 0;
+    });
+    if(view.words.length == 0)
+        view = {view:[]};
+    else
+        view = {view:view};
+	mustache_render('#words', view);
+}
+
 
 $(document).ready(function(){
 
@@ -95,6 +130,7 @@ $(document).ready(function(){
     $("#clearChecked").bind('click', clearChecked);
     $("#save").bind('click', saveAsJson);
     $('#UplodaToDrive').bind('click',uploadToDrive)
+    $('#SortByDate').bind('click',sortByDate)
 
     view = localStorage_to_json();
     view = localStorage_json_set_html(view);

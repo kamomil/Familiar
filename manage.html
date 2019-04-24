@@ -18,7 +18,10 @@
         <li>Familiarize it!</li>
     </ol>
 
-
+<div class="buttons">
+<button id="SortByDate">Sort by date</button>
+    <span class="explain">Sort the words by date</span>
+</div>
 <div class="buttons">
 <button id="clearAll">Clear All Words</button>
     <span class="explain">Click to clear all the words and contexts</span>
@@ -46,11 +49,11 @@
     <ol>
 {{#view.words}}
 <li class="word">
-  <input type="checkbox" name="word" id="{{word}}" class="{{word}}_"> {{word}}
+  <input type="checkbox" name="word" id="{{word}}" class="{{word}}_"> {{word}} ({{date}})
 
 {{#contexts}}
  <ul>
-     <li class="context"> <input type="checkbox" name="context" id="{{id}}" class="{{word}}_" value="{{word}}">{{{ctx}}}<a class="context" href="{{url}}" target="_blank">{{url}}</a></li>{{date}}
+     <li class="context"> <input type="checkbox" name="context" id="{{id}}" class="{{word}}_" value="{{word}}">{{{ctx}}}<a class="context" href="{{url}}" target="_blank">{{url}}</a></li>
  </ul>
 {{/contexts}}
 

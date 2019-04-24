@@ -5,7 +5,7 @@ words: [
 
 {"word" : word,
  "contexts" : [{"ctx" : context, orig_word : orig_word}, ...]
- "id" : id
+ "date" : date
  ...
 
  ]
@@ -15,34 +15,46 @@ words: [
 }
 */
 
-function update_contexts(origWord, canonWord, new_context,url, date){
-      console.log("==update_contexts==")
-      contexts = JSON.parse(localStorage.getItem(canonWord))
-      date = date || "" //old json versions (<0.0.7) have no date so default to empty string
-      var hash = objectHash.sha1({ctx:new_context,orig_word:origWord,url:url,date:date});
+/*This function adds a new context, either from a json file or from a
+  new world clicked.
+  If it updates a context from a new clicked word then it update also the date
+  of the word to the date of the new context.
+*/
+
+function update_word(origWord, canonWord, new_context,url, date){
+      console.log("==update_word==")
+      word_data = JSON.parse(localStorage.getItem(canonWord))
+      var hash = objectHash.sha1({ctx:new_context,orig_word:origWord,url:url});
+      var contexts = []
 
       /* word does not exist in the local storage: - add it*/
-      if(contexts === null){
-          contexts = [{ctx:new_context,orig_word:origWord, id:hash,url:url,date:date}];
+      if(word_data === null) {
+          contexts = [{ctx:new_context,orig_word:origWord, id:hash,url:url}];
+          word_data = {contexts: contexts, date:date}
       }
       /* word already exist - add the current context to the existing list of contexts for this word*/
-      else{
+      else {
+          var contexts = word_data.contexts
           for(var i = 0; i<contexts.length;i++){
                 if(contexts[i].ctx == new_context && contexts[i].orig_word == origWord){
                     console.log('context already clicked')
-                    return contexts
+                    return word_data
                 }
           }
-          contexts.push({ctx:new_context,orig_word:origWord, id:hash, url:url,date:date});
+          contexts.push({ctx:new_context,orig_word:origWord, id:hash, url:url});
+          if (word_data.date < date)
+                word_data.date = date
+          word_data.contexts = contexts
       }
-      localStorage.setItem(canonWord,JSON.stringify(contexts));
-      return contexts;
+      localStorage.setItem(canonWord,JSON.stringify(word_data));
+      return word_data;
 }
 
 function localStorage_json_set_html(json){
     console.log("== localStorage_json_set_html==")
 
     for(var i =0; i<json['words'].length; i++){
+        console.log(json['words'][i])
         json['words'][i].contexts = contexts_to_html(json['words'][i].contexts)
     }
 
@@ -83,12 +95,10 @@ function localStorage_to_json(){
     view = []
     for(var i=0;i<localStorage.length;i++){
         var word = localStorage.key(i);
-        if (word !== null){
-
-            var contexts = safe_json_parse(word);
-            if(contexts)
-                view.push({"word" : word, "contexts" : contexts})
-        }
+        var word_data = safe_localstorage_parse(word);
+        console.log(i)
+        console.log(word_data)
+        view.push({"word" : word, "contexts" : word_data.contexts, "date" : word_data.date})
 	}
 	return {"words" : view};
 }
@@ -98,9 +108,9 @@ function localstorage_add_from_json(json){
 
      for(var i =0; i<json['words'].length; i++){
         jc_wc = json['words'][i]
-        lc_contexts = safe_json_parse(jc_wc.word);
+
         for(var k2 = 0;k2<jc_wc.contexts.length; k2++){
-            update_contexts(jc_wc.contexts[k2].orig_word,  jc_wc.word, jc_wc.contexts[k2].ctx, jc_wc.contexts[k2].url, jc_wc.contexts[k2].date)
+            update_word(jc_wc.contexts[k2].orig_word,  jc_wc.word, jc_wc.contexts[k2].ctx, jc_wc.contexts[k2].url, jc_wc.date)
         }
      }
 }
@@ -128,14 +138,14 @@ function localstorage_validate_json(json){
      return true
 }
 
-function safe_json_parse(word){
+function safe_localstorage_parse(word){
     try{
         item = localStorage.getItem(word)
-        var contexts = JSON.parse(localStorage.getItem(word));
-        return contexts;
+        var word_data = JSON.parse(localStorage.getItem(word));
+        return word_data;
     }
     catch(err){
         console.error("JSON could not parse "+ localStorage.getItem(word));
-        return [];
+        return null;
     }
 }

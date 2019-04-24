@@ -26,6 +26,7 @@ const popup_win_data = {
 
 var global_canon_word;
 var global_contexts;
+var global_last_word_date;
 
 function onClick(info, tab) {
     console.log("in generic click: ");
@@ -58,7 +59,9 @@ function onClick(info, tab) {
                     }
                 }
                 global_canon_word = word.toLowerCase();
-                global_contexts = update_contexts(info.selectionText,global_canon_word,ctx,tab.url, Date());
+                var word_data = update_word(info.selectionText,global_canon_word,ctx,tab.url, Date());
+                global_contexts = word_data.contexts
+                global_last_word_date = word_data.date
 
 		function try_capital_case(){
                     console.log("fail with lower case try again with First letter up");
