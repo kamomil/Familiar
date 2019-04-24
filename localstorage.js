@@ -63,18 +63,20 @@ function localStorage_json_set_html(json){
 
 function remove_context(word,id){
 
-    var contexts_str = localStorage.getItem(word);
-    if(contexts_str != null)
+    var word_data = localStorage.getItem(word);
+    if(word_data != null)
     {
-       var contexts = JSON.parse(contexts_str);
+       var contexts = JSON.parse(word_data).contexts;
        for(var j=0 ; j<contexts.length ; j++){
             if(contexts[j].id === id)
             {
                 contexts.splice(j,1)
-                if(contexts.length == 0)
+                if(contexts.length == 0) {
                     localStorage.removeItem(word);
-                else
-                    localStorage.setItem(word,JSON.stringify(contexts));
+                } else {
+                    word_data.contexts = contexts
+                    localStorage.setItem(word,JSON.stringify(word_data));
+                }
                 return;
             }
         }
