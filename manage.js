@@ -56,41 +56,61 @@ function mustache_render(jquey_id, view) {
   $(tag).html(rendered);
 }
 
-/*
-function localStorage_to_json(){
-    console.log("==localStorage_to_json==");
-    view = []
-    for(var i=0;i<localStorage.length;i++){
-        var word = localStorage.key(i);
-        if (word !== null){
+var mus = `
+{{#view}}
+    <h3>Here are the words (in their contexts) you already encountered:</h3>
+    <ol>
+{{#view.words}}
+<li class="word">
+  <input type="checkbox" name="word" id="{{word}}" class="{{word}}_"> {{word}} ({{day}}/{{month}}/{{year}})
 
-            var word_data = safe_localstorage_parse(word);
-            if(word_data)
-                view.push({"word" : word, "contexts" : word_data.contexts, "date" : word_data.date})
-        }
-	}
-	return {"words" : view};
-}
-}
-*/
+{{#contexts}}
+ <ul>
+     <li class="context"> <input type="checkbox" name="context" id="{{id}}" class="{{word}}_" value="{{word}}">{{{ctx}}}<a class="context" href="{{url}}" target="_blank">{{url}}</a></li>
+ </ul>
+{{/contexts}}
+
+</li>
+{{/view.words}}
+        </ol>
+{{/view}}
+{{^view}}
+    <h3>You didn't encounter any word yet</h3>
+{{/view}}
+`
 
 function sortByDate() {
-    view = localStorage_to_json();
+    view = localStorage_to_json(true);
     view = localStorage_json_set_html(view);
-    view = view.words
+    words = view.words
 
-    view.sort(function(a, b) {
-        a = new Date(a.date);
-        b = new Date(b.date);
-        return a>b ? -1 : a<b ? 1 : 0;
+    words.sort(function(a, b) {
+        console.log(a)
+        console.log(b)
+        if (a.year > b.year)
+            return -1
+        else if (a.year < b.year)
+            return 1
+        if (a.month > b.month)
+            return -1
+        else if (a.month < b.month)
+            return 1
+        if (a.day > b.day)
+            return -1
+        else if (a.day < b.day)
+            return 1
+        return 0
+
     });
-    if(view.words.length == 0)
+    view.words = words
+    if(words.length == 0)
         view = {view:[]};
     else
         view = {view:view};
-	mustache_render('#words', view);
+	var tag = $("#words");
+	var rendered = Mustache.to_html(mus, view);
+	$(tag).html(rendered);
 }
-
 
 $(document).ready(function(){
 
@@ -132,14 +152,16 @@ $(document).ready(function(){
     $('#UplodaToDrive').bind('click',uploadToDrive)
     $('#SortByDate').bind('click',sortByDate)
 
-    view = localStorage_to_json();
+    view = localStorage_to_json(true);
     view = localStorage_json_set_html(view);
 
     if(view.words.length == 0)
         view = {view:[]};
     else
         view = {view:view};
-	mustache_render('#words', view);
+    var tag = $("#words");
+    var rendered = Mustache.to_html(mus, view);
+    $(tag).html(rendered);
 
     $('input[name="word"]').bind('click', function ()
        {

@@ -92,7 +92,7 @@ function contexts_to_html(contexts){
 }
 
 //http://stackoverflow.com/questions/2897619/using-html5-javascript-to-generate-and-save-a-file
-function localStorage_to_json(){
+function localStorage_to_json(nice_date = false){
     console.log("==localStorage_to_json==");
     view = []
     for(var i=0;i<localStorage.length;i++){
@@ -100,7 +100,15 @@ function localStorage_to_json(){
         var word_data = safe_localstorage_parse(word);
         console.log(i)
         console.log(word_data)
-        view.push({"word" : word, "contexts" : word_data.contexts, "date" : word_data.date})
+        if (nice_date) {
+            var date = new Date(word_data.date)
+            var day = date.getDate();
+            var month = date.getMonth();
+            var year = date.getFullYear();
+            view.push({"word" : word, "contexts" : word_data.contexts, "day" : day, "month" : month, "year" : year})
+        } else {
+            view.push({"word" : word, "contexts" : word_data.contexts, "date" : word_data.date})
+        }
 	}
 	return {"words" : view};
 }

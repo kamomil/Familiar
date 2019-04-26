@@ -44,26 +44,7 @@
 </div>
 <div id="words">
 
-{{#view}}
-    <h3>Here are the words (in their contexts) you already encountered:</h3>
-    <ol>
-{{#view.words}}
-<li class="word">
-  <input type="checkbox" name="word" id="{{word}}" class="{{word}}_"> {{word}} ({{date}})
 
-{{#contexts}}
- <ul>
-     <li class="context"> <input type="checkbox" name="context" id="{{id}}" class="{{word}}_" value="{{word}}">{{{ctx}}}<a class="context" href="{{url}}" target="_blank">{{url}}</a></li>
- </ul>
-{{/contexts}}
-
-</li>
-{{/view.words}}
-        </ol>
-{{/view}}
-{{^view}}
-    <h3>You didn't encounter any word yet</h3>
-{{/view}}
 </div>
 
 </body>
