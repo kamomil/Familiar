@@ -1,7 +1,3 @@
-var background = chrome.extension.getBackgroundPage();
-var canonWord = background.global_canon_word;
-var contexts = background.global_contexts;
-var lastWordDate = background.global_last_word_date;
 
 function mustache_render(jquey_id, view) {
   var tag = $(jquey_id);
@@ -10,14 +6,6 @@ function mustache_render(jquey_id, view) {
   console.log(rendered);
   $(tag).html(rendered);
 }
-
-$(document).ready(function () {
-
-    mustache_render('#canon' , {canonWord : canonWord});
-
-    html_ctx = {contexts : contexts_to_html(contexts)};
-    mustache_render('#contexts' , html_ctx);
-});
 
 lang_codes = {
     "bg" : 	"Bulgarian",
@@ -47,6 +35,17 @@ lang_codes = {
 };
 
 chrome.runtime.onMessage.addListener(function(def, sender,resp) {
+
+    console.log("==popup listerner==")
+    var background = chrome.extension.getBackgroundPage();
+    var canonWord = background.global_canon_word;
+    var contexts = background.global_contexts;
+    var lastWordDate = background.global_last_word_date;
+
+    mustache_render('#canon' , {canonWord : canonWord});
+
+    html_ctx = {contexts : contexts_to_html(contexts)};
+    mustache_render('#contexts' , html_ctx);
    def.languages = [];
    for (var property in def) {
         if (def.hasOwnProperty(property) && property != "languages") {

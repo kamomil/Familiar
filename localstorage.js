@@ -21,8 +21,9 @@ words: [
   of the word to the date of the new context.
 */
 
-function update_word(origWord, canonWord, new_context,url, date){
-      console.log("==update_word==")
+function localStorage_update_word(origWord, canonWord, new_context,url, date){
+      console.log("==localStorage_update_word==")
+      console.log(canonWord)
       word_data = JSON.parse(localStorage.getItem(canonWord))
       var hash = objectHash.sha1({ctx:new_context,orig_word:origWord,url:url});
       var contexts = []
@@ -120,7 +121,7 @@ function localstorage_add_from_json(json){
         jc_wc = json['words'][i]
 
         for(var k2 = 0;k2<jc_wc.contexts.length; k2++){
-            update_word(jc_wc.contexts[k2].orig_word,  jc_wc.word, jc_wc.contexts[k2].ctx, jc_wc.contexts[k2].url, jc_wc.date)
+            localStorage_update_word(jc_wc.contexts[k2].orig_word,  jc_wc.word, jc_wc.contexts[k2].ctx, jc_wc.contexts[k2].url, jc_wc.date)
         }
      }
 }

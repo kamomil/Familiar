@@ -28,17 +28,59 @@ var global_canon_word;
 var global_contexts;
 var global_last_word_date;
 
+function process_wiki_lang_defs(lang, word) {
+
+
+    if (!lang)
+        return false
+    console.log("==process_wiki_lang_defs==");
+    global_canon_word = word
+    var forwarded_defs = 0
+    var defs = 0
+    var canon_words = []
+
+    for (var i = 0; i < lang.length; i++) {
+        pos = lang[i]
+        for (var j = 0; j < pos.definitions.length; j++) {
+            defs++;
+            def = pos.definitions[j]
+            console.log(def)
+            if(def.definition.includes("form-of-definition") || def.definition.includes("use-with-mention")) {
+                regex = /(title=)"([^"]+)"/g
+                var title = def.definition.matchAll(regex)
+                if(title) {
+                    var title = Array.from(title)
+                    title = title[title.length - 1][2]
+                    canon_words.push(title)
+                    forwarded_defs++
+                }
+            }
+        }
+    }
+    if (forwarded_defs === defs)
+        global_canon_word = canon_words[0]
+    console.log(global_canon_word)
+    return true
+}
+
 function onClick(info, tab) {
     console.log("in generic click: ");
     console.log(info);
     console.log(tab);
 
-    var wordRegex = /[a-zA-Z]+(\W*[a-zA-Z]+)?/;
+    var letters = "\u0041-\u005A\u0061-\u007A\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377\u037A-\u037D\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5\u03F7-\u0481\u048A"
+    var wordRegex = new RegExp("[" + letters + "]+(\\W*[" + letters + "]+)?");
     var word = wordRegex.exec(info.selectionText);
     word = word[0];
     console.log(word);
     if(word === null)
         return;
+
+//1. english meaning - take only if there is in the lowercase
+//2. german meaning - if the word is originaly lowercase - take the meaning
+//                    if the word is not originaly lower case - take the upper case meaning if there is, othewise take the lowercase meaning
+//if the word is uppercase and has a meaning as lowercase in English - take the english
+
 
     chrome.tabs.executeScript(tab.id, {code: tab_code},
          function(range) {
@@ -49,28 +91,53 @@ function onClick(info, tab) {
             }
             else{
                 var created_tab = null;
+                var upper_data = null
 
-                function process_def_json(data,text){
-                    console.log("==process_def_json==");
-                    console.log(text);
+                function process_wiki_json_low_case(data,text){
+                    console.log("==process_wiki_json_low_case==");
+                    if (!process_wiki_lang_defs(data.en, word.toLowerCase())) {
+                        data = upper_data
+                        process_wiki_lang_defs(data.de, word)
+                    }
+                    var word_data = localStorage_update_word(info.selectionText,global_canon_word,ctx,tab.url, Date());
+                    global_contexts = word_data.contexts
+                    global_last_word_date = word_data.date
 
-                    if(created_tab !== null) {
+                    if(created_tab) {
+                        console.log("==message to pop==");
                         chrome.tabs.sendMessage(created_tab.id, data);
                     }
                 }
-                global_canon_word = word.toLowerCase();
-                var word_data = update_word(info.selectionText,global_canon_word,ctx,tab.url, Date());
-                global_contexts = word_data.contexts
-                global_last_word_date = word_data.date
+                function process_wiki_json(data,text){
+                    console.log("==process_wiki_json==");
+                    console.log(text);//text is either "error" or "success"
+                    console.log(data)
 
-		function try_capital_case(){
-                    console.log("fail with lower case try again with First letter up");
-                    canon_first_upper =  global_canon_word.charAt(0).toUpperCase() + global_canon_word.slice(1);
-                    $.get("https://en.wiktionary.org/api/rest_v1/page/definition/"+encodeURI(canon_first_upper), process_def_json ).fail(process_def_json);
-		}
+                    if (word === word.toLowerCase()) {
+                        console.log("word is original low case")
+                        process_wiki_lang_defs(data.de, word)
+                        process_wiki_lang_defs(data.en, word)
+                        var word_data = localStorage_update_word(info.selectionText,global_canon_word,ctx,tab.url, Date());
+                        global_contexts = word_data.contexts
+                        global_last_word_date = word_data.date
+
+                        if(created_tab) {
+                            console.log("==message to pop==");
+                            chrome.tabs.sendMessage(created_tab.id, data);
+                        }
+                    }
+                    else {
+                        console.log("word is original UPPER CASE")
+                        $.get("https://en.wiktionary.org/api/rest_v1/page/definition/"+encodeURI(word.toLowerCase()), process_wiki_json_low_case ).fail(process_wiki_json_low_case);
+                        process_wiki_lang_defs(data.de, word)
+                        upper_data = data
+                        return
+                    }
+                }
+                global_canon_word = word
 
                 //https://en.wiktionary.org/api/rest_v1/#!/Page_content/get_page_definition_term
-                $.get("https://en.wiktionary.org/api/rest_v1/page/definition/"+encodeURI(global_canon_word), process_def_json ).fail(try_capital_case);
+                $.get("https://en.wiktionary.org/api/rest_v1/page/definition/"+encodeURI(word), process_wiki_json ).fail(process_wiki_json);
                 chrome.windows.create(popup_win_data, function(window) {created_tab = window.tabs[0];} );
             }
          });
@@ -86,7 +153,7 @@ function naiveSentenceRec(paragraph ,word){
     //current implementation:
     //split the paragraph according to commas.
     //in the list, if a variable is not a new line, concate it to the one before.
-
+    console.log("==naiveSentenceRec==")
     var commaSplitList = paragraph.split(/\./g);
     var sntncList = [commaSplitList[0]];
     var sntncIdx =0;
@@ -101,13 +168,19 @@ function naiveSentenceRec(paragraph ,word){
             sntncList[sntncIdx] = commaSplitList[i];
         }
     }
+    console
     //now we return the senetence of the word with the senetence before and after it.
     //word = word.replace(" ","\s");
+
     var ctxRegex = new RegExp("\\b"+word+"\\b");
+    if (word.startsWith("ü") || word.startsWith("ä") || word.startsWith("ö") || word.startsWith("Ü") || word.startsWith("Ä") || word.startsWith("Ö"))
+        ctxRegex = new RegExp(word+"\\b");
     ctx = "";
     var LIMIT_CTX_LENGTH = 200;
+    console.log(sntncList.length)
+    console.log(ctxRegex)
     for(var i=0;i<sntncList.length;i++){
-
+        console.log(sntncList[i])
         if(ctxRegex.test(sntncList[i])){
             ctx = sntncList[i];
             if(i>0 && ctx.length<LIMIT_CTX_LENGTH && sntncList[i-1].length<LIMIT_CTX_LENGTH)
