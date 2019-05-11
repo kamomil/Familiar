@@ -37,6 +37,9 @@ lang_codes = {
 chrome.runtime.onMessage.addListener(function(def, sender,resp) {
 
     console.log("==popup listerner==")
+    console.log(def)
+    console.log(sender)
+
     var background = chrome.extension.getBackgroundPage();
     var canonWord = background.global_canon_word;
     var contexts = background.global_contexts;
@@ -45,9 +48,14 @@ chrome.runtime.onMessage.addListener(function(def, sender,resp) {
     mustache_render('#canon' , {canonWord : canonWord});
 
     html_ctx = {contexts : contexts_to_html(contexts)};
-    mustache_render('#contexts' , html_ctx);
-   def.languages = [];
-   for (var property in def) {
+    mustache_render('#contexts', html_ctx);
+
+    if (def.status) {
+        mustache_render('#def', "");
+        return
+    }
+    def.languages = [];
+    for (var property in def) {
         if (def.hasOwnProperty(property) && property != "languages") {
             if(lang_codes[property])
                 def.languages.unshift({lang:lang_codes[property],record:def[property]});
@@ -58,7 +66,4 @@ chrome.runtime.onMessage.addListener(function(def, sender,resp) {
     }
     mustache_render('#def', def);
 });
-
-
-
 

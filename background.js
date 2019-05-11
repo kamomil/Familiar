@@ -28,40 +28,42 @@ var global_canon_word;
 var global_contexts;
 var global_last_word_date;
 
-function process_wiki_lang_defs(lang, word) {
-
+function take_target_def_if_all_forwarded(lang, word) {
 
     if (!lang)
-        return false
-    console.log("==process_wiki_lang_defs==");
+        return
+    console.log("==take_target_def_if_all_forwarded==");
     global_canon_word = word
     var forwarded_defs = 0
     var defs = 0
     var canon_words = []
 
+    //for each part of speach (pos)
     for (var i = 0; i < lang.length; i++) {
         pos = lang[i]
         for (var j = 0; j < pos.definitions.length; j++) {
             defs++;
             def = pos.definitions[j]
             console.log(def)
+            //this is a def of a type the links the original def (like a plural form with a link to the single form)
             if(def.definition.includes("form-of-definition") || def.definition.includes("use-with-mention")) {
                 regex = /(title=)"([^"]+)"/g
                 var title = def.definition.matchAll(regex)
                 if(title) {
                     var title = Array.from(title)
-                    title = title[title.length - 1][2]
+                    title = title[title.length - 1][2]//title is the original "canonical" form
                     canon_words.push(title)
                     forwarded_defs++
                 }
             }
         }
     }
-    if (forwarded_defs === defs)
+    if (forwarded_defs === defs)//if all defs are forward defs then take the first forward target as the canonical
         global_canon_word = canon_words[0]
     console.log(global_canon_word)
-    return true
 }
+
+var window_id = null;
 
 function onClick(info, tab) {
     console.log("in generic click: ");
@@ -90,14 +92,20 @@ function onClick(info, tab) {
                 alert("You miss selected the word");
             }
             else{
-                var created_tab = null;
-                var upper_data = null
 
+                var upper_data = null;
+                var created_tab = null;
+
+                //called when the original word is upper case and it is reduced to lower case
                 function process_wiki_json_low_case(data,text){
                     console.log("==process_wiki_json_low_case==");
-                    if (!process_wiki_lang_defs(data.en, word.toLowerCase())) {
+                    console.log(data)
+                    if (!data.en) {
                         data = upper_data
-                        process_wiki_lang_defs(data.de, word)
+                        take_target_def_if_all_forwarded(data.de, word)
+                    }
+                    else {
+                        take_target_def_if_all_forwarded(data.en, word.toLowerCase())
                     }
                     var word_data = localStorage_update_word(info.selectionText,global_canon_word,ctx,tab.url, Date());
                     global_contexts = word_data.contexts
@@ -108,6 +116,7 @@ function onClick(info, tab) {
                         chrome.tabs.sendMessage(created_tab.id, data);
                     }
                 }
+
                 function process_wiki_json(data,text){
                     console.log("==process_wiki_json==");
                     console.log(text);//text is either "error" or "success"
@@ -115,8 +124,8 @@ function onClick(info, tab) {
 
                     if (word === word.toLowerCase()) {
                         console.log("word is original low case")
-                        process_wiki_lang_defs(data.de, word)
-                        process_wiki_lang_defs(data.en, word)
+                        take_target_def_if_all_forwarded(data.de, word)
+                        take_target_def_if_all_forwarded(data.en, word)
                         var word_data = localStorage_update_word(info.selectionText,global_canon_word,ctx,tab.url, Date());
                         global_contexts = word_data.contexts
                         global_last_word_date = word_data.date
@@ -129,16 +138,23 @@ function onClick(info, tab) {
                     else {
                         console.log("word is original UPPER CASE")
                         $.get("https://en.wiktionary.org/api/rest_v1/page/definition/"+encodeURI(word.toLowerCase()), process_wiki_json_low_case ).fail(process_wiki_json_low_case);
-                        process_wiki_lang_defs(data.de, word)
+                        take_target_def_if_all_forwarded(data.de, word)
                         upper_data = data
-                        return
                     }
                 }
                 global_canon_word = word
 
                 //https://en.wiktionary.org/api/rest_v1/#!/Page_content/get_page_definition_term
                 $.get("https://en.wiktionary.org/api/rest_v1/page/definition/"+encodeURI(word), process_wiki_json ).fail(process_wiki_json);
-                chrome.windows.create(popup_win_data, function(window) {created_tab = window.tabs[0];} );
+                chrome.windows.create(popup_win_data, function(window) {
+                                                        //kill the previous popup when a new one is poped so not to flood with pop
+                                                        if (window_id) {
+                                                            console.log(window_id)
+                                                            chrome.windows.remove(window_id);
+                                                        }
+                                                        created_tab = window.tabs[0]
+                                                        window_id = window.id
+                                                      });
             }
          });
 }
