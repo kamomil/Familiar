@@ -64,6 +64,7 @@ function take_target_def_if_all_forwarded(lang, word) {
 }
 
 var window_id = null;
+var WIKI_PATH = "https://en.wiktionary.org/api/rest_v1/page/definition/";
 
 function onClick(info, tab) {
     console.log("in generic click: ");
@@ -113,7 +114,7 @@ function onClick(info, tab) {
 
                     if(created_tab) {
                         console.log("==message to pop==");
-                        chrome.tabs.sendMessage(created_tab.id, data);
+                        chrome.tabs.sendMessage(created_tab.id, {'data' : data, 'url' : WIKI_PATH + encodeURI(word.toLowerCase())});
                     }
                 }
 
@@ -132,12 +133,12 @@ function onClick(info, tab) {
 
                         if(created_tab) {
                             console.log("==message to pop==");
-                            chrome.tabs.sendMessage(created_tab.id, data);
+                            chrome.tabs.sendMessage(created_tab.id, {'data' : data, 'url' : WIKI_PATH + encodeURI(word)});
                         }
                     }
                     else {
                         console.log("word is original UPPER CASE")
-                        $.get("https://en.wiktionary.org/api/rest_v1/page/definition/"+encodeURI(word.toLowerCase()), process_wiki_json_low_case ).fail(process_wiki_json_low_case);
+                        $.get(WIKI_PATH + encodeURI(word.toLowerCase()), process_wiki_json_low_case ).fail(process_wiki_json_low_case);
                         take_target_def_if_all_forwarded(data.de, word)
                         upper_data = data
                     }
@@ -145,7 +146,7 @@ function onClick(info, tab) {
                 global_canon_word = word
 
                 //https://en.wiktionary.org/api/rest_v1/#!/Page_content/get_page_definition_term
-                $.get("https://en.wiktionary.org/api/rest_v1/page/definition/"+encodeURI(word), process_wiki_json ).fail(process_wiki_json);
+                $.get(WIKI_PATH + encodeURI(word), process_wiki_json ).fail(process_wiki_json);
                 chrome.windows.create(popup_win_data, function(window) {
                                                         //kill the previous popup when a new one is poped so not to flood with pop
                                                         if (window_id) {

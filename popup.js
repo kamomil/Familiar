@@ -34,10 +34,10 @@ lang_codes = {
     "sv" : 	"Swedish"
 };
 
-chrome.runtime.onMessage.addListener(function(def, sender,resp) {
+chrome.runtime.onMessage.addListener(function(data, sender,resp) {
 
     console.log("==popup listerner==")
-    console.log(def)
+    console.log(data)
     console.log(sender)
 
     var background = chrome.extension.getBackgroundPage();
@@ -49,6 +49,11 @@ chrome.runtime.onMessage.addListener(function(def, sender,resp) {
 
     html_ctx = {contexts : contexts_to_html(contexts)};
     mustache_render('#contexts', html_ctx);
+
+    var def = data.data;
+    var wiki_url = {'wiki_url' : data.url};
+
+    mustache_render('#wiki', wiki_url);
 
     if (def.status) {
         mustache_render('#def', "");
