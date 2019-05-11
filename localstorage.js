@@ -85,8 +85,14 @@ function remove_context(word,id){
 }
 
 function contexts_to_html(contexts){
+    RegExp.escape= function(s) {
+        return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+    };
     for(var i=0 ; i<contexts.length ; i++){
-        var origWordRgx = new RegExp ("\\b"+contexts[i].orig_word+"\\b",'g');
+        console.log(contexts[i].orig_word)
+        console.log(escape(contexts[i].orig_word))
+
+        var origWordRgx = new RegExp ("\\b"+RegExp.escape(contexts[i].orig_word)+"\\b",'g');
         contexts[i].ctx = contexts[i].ctx.replace(origWordRgx,'<span class="word">'+contexts[i].orig_word+'</span>');
     }
     return contexts
