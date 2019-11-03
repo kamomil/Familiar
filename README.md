@@ -5,4 +5,4 @@ the menu and the extension icon. It update the DB and creates the popup.
 
 manage.js - deals with the management of words and contexts - executed when the user clicks on the extension icon. 
 
-popup.js - creates the popup of the word definition and the list of it's contexts.
+*popup.js* - creates the popup of the word definition and the list of it's contexts.
