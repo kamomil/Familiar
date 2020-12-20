@@ -12,6 +12,6 @@ manage.js - deals with the management of words and contexts - executed when the 
 
 [derdiedas firefox](https://addons.mozilla.org/en-US/firefox/addon/%D7%93%D7%A8%D7%93%D7%A1/)
 
-[webassembly](https://addons.mozilla.org/en-US/firefox/addon/%D7%93%D7%A8%D7%93%D7%A1/)
+[webassembly](https://en.wikipedia.org/wiki/WebAssembly)
 
 
